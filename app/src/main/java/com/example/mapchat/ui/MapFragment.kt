@@ -288,13 +288,3 @@ class MapFragment : Fragment() {
 }
 
 
-@BindingAdapter("bind:imageUrl")
-fun loadImage(view: ImageView, imageUrl: String?) {
-
-    Glide.with(view.context).load(imageUrl)
-        .error(R.drawable.ic_person_black_24dp)
-        .placeholder(R.drawable.ic_person_black_24dp)
-        .into(view)
-
-
-}

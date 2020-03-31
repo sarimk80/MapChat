@@ -1,6 +1,7 @@
 package com.example.mapchat.ui
 
 
+import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -8,13 +9,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -28,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import convertToAscii
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -40,11 +42,12 @@ class ChatFragment : Fragment() {
     private val mAuth: FirebaseAuth by inject()
     private lateinit var geocoder: Geocoder
     private var asciiCode: String = ""
+    private var friendId: String = ""
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var messageAdapter: MessageAdapter
 
     private var recyclerView: RecyclerView? = null
-    private val messages: Messages = Messages("sasd", "dasd", "hello", "2020-march-29")
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,20 +74,22 @@ class ChatFragment : Fragment() {
         return fragmentChatBinding.root
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         asciiCode = convertToAscii(mAuth.uid, arguments?.getString("FriendId"))
+        friendId = arguments?.getString("FriendId")!!
 
         linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        linearLayoutManager.stackFromEnd = false
-        linearLayoutManager.reverseLayout = false
-        linearLayoutManager.isSmoothScrollbarEnabled = false
+        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration())
 
-        charViewModel.getSingleUser(arguments?.getString("FriendId")!!)
+        charViewModel.getSingleUser(friendId)
             .observe(this, Observer { user ->
 
                 fragmentChatBinding.user = user
@@ -109,17 +114,27 @@ class ChatFragment : Fragment() {
                         messageAdapter = MessageAdapter(context!!, data)
 
                         recyclerView!!.adapter = messageAdapter
+                        recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount + 1)
                         messageAdapter.notifyDataSetChanged()
-
-                        Log.d("ChatFragment", "data change")
-
 
                     }
                 })
 
 
         fragmentChatBinding.sendMessage.setOnClickListener {
-            charViewModel.updateMessages(asciiCode, messages).observe(this, Observer {})
+
+            sendMessageToDataBase()
+        }
+
+        fragmentChatBinding.edtMessage.setOnEditorActionListener { _, actionId, _ ->
+
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    sendMessageToDataBase()
+                    true
+                }
+                else -> false
+            }
         }
 
 
@@ -148,15 +163,39 @@ class ChatFragment : Fragment() {
         var city = ""
 
         CoroutineScope(Dispatchers.IO).launch {
-            val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
-            city = address[0].locality + ", " + address[0].countryName
+            city = try {
+                val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
+                address[0].locality + ", " + address[0].countryName
+            } catch (e: Throwable) {
+                "Earth"
+            }
+
         }.join()
-
-
-
-
         return city
     }
 
+    fun sendMessageToDataBase() {
+
+        if (fragmentChatBinding.edtMessage.text.isNotEmpty()) {
+
+            val formatter = SimpleDateFormat("MM/dd/yy HH:mm aa")
+
+            val messages =
+                Messages(
+                    mAuth.uid,
+                    friendId,
+                    fragmentChatBinding.edtMessage.text.toString(),
+                    formatter.format(Calendar.getInstance().time)
+                )
+            charViewModel.updateMessages(asciiCode, messages).observe(this, Observer {})
+
+        }
+
+
+        fragmentChatBinding.edtMessage.text.clear()
+
+    }
 
 }
+
+

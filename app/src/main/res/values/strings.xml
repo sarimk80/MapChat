@@ -5,4 +5,5 @@
     <string name="mapbox_access_token">pk.eyJ1Ijoic2FyaW1rODAiLCJhIjoiY2s4NDZxM3hqMWZ3eTNscGdlangzNGhjciJ9.ZD84q5quOcy8MTrWJaC2wQ</string>
     <string name="mapboc_access_style">mapbox://styles/sarimk80/ck7zsscfi19at1ip8me8fd9en</string>
     <string name="hint">Type a message</string>
+    <string name="format">%1$tm %1$te,%1$tY</string>
 </resources>
