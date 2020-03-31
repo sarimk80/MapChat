@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+
+    <data>
+
+        <variable
+            name="user"
+            type="com.example.mapchat.model.Users" />
+
+        <variable
+            name="bottomEvent"
+            type="com.example.mapchat.event.BottomSheetEvent" />
+
+        <variable
+            name="imageUrl"
+            type="String" />
+
+
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_margin="5dp"
+            android:background="@drawable/ic_close_black_24dp"
+            android:contentDescription="@string/app_name"
+            android:onClick="@{(v)->bottomEvent.close()}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/lato_bold"
+            android:text="@{user.name}"
+            android:textColor="@color/colorText"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/lato_light"
+            android:text="@{user.email}"
+            android:textColor="@color/colorText"
+            android:textSize="15dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/lato_light"
+            android:text="@{user.phoneNumber}"
+            android:textColor="@color/colorText"
+            android:textSize="15dp" />
+
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            app:imageUrl="@{imageUrl}"
+            android:contentDescription="@string/app_name" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/button_style"
+            android:fontFamily="@font/lato"
+            android:onClick="@{(v)->bottomEvent.startConversation()}"
+            android:text="Start Conversation"
+            android:textColor="@color/colorText"
+
+            />
+
+    </LinearLayout>
+
+
+</layout>
