@@ -92,7 +92,7 @@ class MapFragment : Fragment() {
                         locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)!!
 
                     mapViewModel.getUploadedResult(mAuth, location.latitude, location.longitude)
-                        .observe(this, Observer { isUploaded ->
+                        .observe(viewLifecycleOwner, Observer { isUploaded ->
                             if (isUploaded) {
                                 Log.d("FragmentMap", isUploaded.toString())
                             } else {
@@ -127,7 +127,7 @@ class MapFragment : Fragment() {
 
 
         // Error Observer
-        mapViewModel.Error().observe(this, Observer { error ->
+        mapViewModel.Error().observe(viewLifecycleOwner, Observer { error ->
             Snackbar.make(
                 fragmentMapBinding.root,
                 "No internet Connection $error",
@@ -147,7 +147,7 @@ class MapFragment : Fragment() {
 
 
         //Progressbar Observer
-        mapViewModel.Loading().observe(this, Observer { isLoading ->
+        mapViewModel.Loading().observe(viewLifecycleOwner, Observer { isLoading ->
 
             if (isLoading) {
                 fragmentMapBinding.progressCircular.visibility = View.VISIBLE
@@ -159,7 +159,7 @@ class MapFragment : Fragment() {
 
 
         //UserList Observer
-        mapViewModel.getUserList().observe(this, Observer { user ->
+        mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
 
 
             fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->

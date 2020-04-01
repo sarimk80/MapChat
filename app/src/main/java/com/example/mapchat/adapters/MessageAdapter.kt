@@ -8,22 +8,48 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mapchat.R
 import com.example.mapchat.databinding.MessageBinding
+import com.example.mapchat.databinding.MessageUserBinding
 import com.example.mapchat.model.Messages
 
-class MessageAdapter(private val context: Context, private val messageList: List<Messages>) :
-    RecyclerView.Adapter<MessageAdapter.MessageView>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageView {
+class MessageAdapter(
+    private val context: Context,
+    private val messageList: List<Messages>,
+    private val userId: String
+) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val USER_MESSAGE_BINDING: Int = 1
+    private val FRIEND_MESSAGE_BINDING: Int = 2
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val messageBinding: MessageBinding =
-            DataBindingUtil.inflate(layoutInflater, R.layout.messages_display, parent, false)
-        return MessageView(messageBinding)
+
+        return if (viewType == 1) {
+            val messageBinding: MessageBinding =
+                DataBindingUtil.inflate(layoutInflater, R.layout.messages_display, parent, false)
+            MessageView(messageBinding)
+        } else {
+            val messageUserBinding: MessageUserBinding =
+                DataBindingUtil.inflate(layoutInflater, R.layout.message_chat_user, parent, false)
+            MessageUserView(messageUserBinding)
+        }
+
+
     }
 
     override fun getItemCount(): Int {
         return messageList.size
     }
 
-    override fun onBindViewHolder(holder: MessageView, position: Int) {
+    override fun getItemViewType(position: Int): Int {
+        return if (messageList[position].fromUuid == userId) {
+            FRIEND_MESSAGE_BINDING
+        } else {
+            USER_MESSAGE_BINDING
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         val oldMessage = messageList
 
@@ -38,13 +64,20 @@ class MessageAdapter(private val context: Context, private val messageList: List
         val messageList = messageList[position]
         diffResult.dispatchUpdatesTo(this)
 
-        holder.bind(messageList)
+        if (getItemViewType(position) == USER_MESSAGE_BINDING) {
+            val userMessageBinding = holder as MessageView
+            userMessageBinding.bind(messageList)
+        } else {
+            val friendMessageBinding = holder as MessageUserView
+            friendMessageBinding.bind(messageList)
+        }
+//        holder.bind(messageList)
     }
 
 
     class MessageDiffCallBack(
-        var oldMessageList: List<Messages>,
-        var newMessageList: List<Messages>
+        private var oldMessageList: List<Messages>,
+        private var newMessageList: List<Messages>
     ) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return (oldMessageList[oldItemPosition].date == newMessageList[newItemPosition].date)
@@ -70,6 +103,14 @@ class MessageAdapter(private val context: Context, private val messageList: List
         fun bind(messages: Messages) {
             this.messageBinding.message = messages
             messageBinding.executePendingBindings()
+        }
+    }
+
+    class MessageUserView(private val messageUserBinding: MessageUserBinding) :
+        RecyclerView.ViewHolder(messageUserBinding.root) {
+        fun bind(messages: Messages) {
+            this.messageUserBinding.message = messages
+            messageUserBinding.executePendingBindings()
         }
     }
 }

@@ -4,7 +4,7 @@
 
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data class="MessageBinding">
+    <data class="MessageUserBinding">
 
 
         <variable
@@ -28,15 +28,18 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5">
+            android:layout_weight="1.5"
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardBackgroundColor="@color/colorAccent"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="2dp"
+
                 app:cardPreventCornerOverlap="false">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -47,20 +50,21 @@
                         android:id="@+id/msg"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
                         android:layout_margin="10dp"
                         android:fontFamily="@font/lato"
                         android:text='@{message.text,default="First Message"}'
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/colorBackground"
                         android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
+                        android:layout_gravity="start"
                         android:layout_margin="10dp"
                         android:fontFamily="@font/lato_light"
                         android:text="@{message.date}"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/colorBackground"
                         android:textSize="15sp"
 
                         />
@@ -68,7 +72,6 @@
 
 
             </androidx.cardview.widget.CardView>
-
 
         </LinearLayout>
 

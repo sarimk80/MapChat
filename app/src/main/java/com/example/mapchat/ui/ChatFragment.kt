@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -74,7 +73,7 @@ class ChatFragment : Fragment() {
         return fragmentChatBinding.root
     }
 
-    @SuppressLint("SimpleDateFormat")
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -90,7 +89,7 @@ class ChatFragment : Fragment() {
         recyclerView!!.addItemDecoration(MessageDecoration())
 
         charViewModel.getSingleUser(friendId)
-            .observe(this, Observer { user ->
+            .observe(viewLifecycleOwner, Observer { user ->
 
                 fragmentChatBinding.user = user
                 Glide.with(this).load(user.imageUrl).placeholder(R.drawable.ic_person_black_24dp)
@@ -105,13 +104,13 @@ class ChatFragment : Fragment() {
 
 
         charViewModel.getAllMessages(asciiCode)
-            .observe(this,
+            .observe(viewLifecycleOwner,
                 Observer { data ->
 
                     if (data.isEmpty()) {
                         Log.d("ChatFragment", data.size.toString())
                     } else {
-                        messageAdapter = MessageAdapter(context!!, data)
+                        messageAdapter = MessageAdapter(context!!, data,mAuth.uid!!)
 
                         recyclerView!!.adapter = messageAdapter
                         recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount + 1)
@@ -141,7 +140,7 @@ class ChatFragment : Fragment() {
 
 
 
-        charViewModel.loading().observe(this, Observer { isLoading ->
+        charViewModel.loading().observe(viewLifecycleOwner, Observer { isLoading ->
             if (isLoading) {
                 fragmentChatBinding.progressCircular.visibility = View.VISIBLE
             } else {
@@ -150,7 +149,7 @@ class ChatFragment : Fragment() {
         })
 
 
-        charViewModel.error().observe(this, Observer { error ->
+        charViewModel.error().observe(viewLifecycleOwner, Observer { error ->
             Log.d("ChatFragment", error)
         })
 
@@ -174,7 +173,8 @@ class ChatFragment : Fragment() {
         return city
     }
 
-    fun sendMessageToDataBase() {
+    @SuppressLint("SimpleDateFormat")
+    private fun sendMessageToDataBase() {
 
         if (fragmentChatBinding.edtMessage.text.isNotEmpty()) {
 
@@ -187,7 +187,7 @@ class ChatFragment : Fragment() {
                     fragmentChatBinding.edtMessage.text.toString(),
                     formatter.format(Calendar.getInstance().time)
                 )
-            charViewModel.updateMessages(asciiCode, messages).observe(this, Observer {})
+            charViewModel.updateMessages(asciiCode, messages).observe(viewLifecycleOwner, Observer {})
 
         }
 
