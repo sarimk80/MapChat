@@ -23,10 +23,12 @@ import com.example.mapchat.adapters.MessageAdapter
 import com.example.mapchat.adapters.MessageDecoration
 import com.example.mapchat.databinding.FragmentChatBinding
 import com.example.mapchat.model.Messages
+import com.example.mapchat.model.UserMessages
+import com.example.mapchat.model.Users
 import com.example.mapchat.view_model.ChatViewModel
 import com.google.firebase.auth.FirebaseAuth
 import convertToAscii
-import kotlinx.coroutines.*
+
 import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +46,7 @@ class ChatFragment : Fragment() {
     private var friendId: String = ""
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var messageAdapter: MessageAdapter
+    private lateinit var friendUser: Users
 
     private var recyclerView: RecyclerView? = null
 
@@ -97,8 +100,10 @@ class ChatFragment : Fragment() {
 
 //                val address = geocoder.getFromLocation(user.latitude!!, user.longitude!!, 1)
 
-                runBlocking {
-                    fragmentChatBinding.city = getCity(user.latitude, user.longitude)
+                fragmentChatBinding.city = getCity(user.latitude, user.longitude)
+
+                if (user != null) {
+                    friendUser = user
                 }
             })
 
@@ -110,7 +115,7 @@ class ChatFragment : Fragment() {
                     if (data.isEmpty()) {
                         Log.d("ChatFragment", data.size.toString())
                     } else {
-                        messageAdapter = MessageAdapter(context!!, data,mAuth.uid!!)
+                        messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
 
                         recyclerView!!.adapter = messageAdapter
                         recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount + 1)
@@ -157,19 +162,17 @@ class ChatFragment : Fragment() {
     }
 
 
-    private suspend fun getCity(latitude: Double?, longitude: Double?): String {
+    private fun getCity(latitude: Double?, longitude: Double?): String {
 
-        var city = ""
+        val city: String
+        city = try {
+            val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
+            address[0].locality + ", " + address[0].countryName
+        } catch (e: Throwable) {
+            "Earth"
+        }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            city = try {
-                val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
-                address[0].locality + ", " + address[0].countryName
-            } catch (e: Throwable) {
-                "Earth"
-            }
 
-        }.join()
         return city
     }
 
@@ -187,7 +190,19 @@ class ChatFragment : Fragment() {
                     fragmentChatBinding.edtMessage.text.toString(),
                     formatter.format(Calendar.getInstance().time)
                 )
-            charViewModel.updateMessages(asciiCode, messages).observe(viewLifecycleOwner, Observer {})
+
+            val friendUser = UserMessages(friendUser, formatter.format(Calendar.getInstance().time))
+            charViewModel.updateMessages(asciiCode, messages)
+                .observe(viewLifecycleOwner, Observer { value ->
+
+                    if (value == true) {
+                        charViewModel.updateSendUserData(asciiCode, friendUser)
+                            .observe(viewLifecycleOwner,
+                                Observer {})
+                    }
+
+
+                })
 
         }
 

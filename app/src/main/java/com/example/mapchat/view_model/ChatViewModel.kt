@@ -1,10 +1,11 @@
 package com.example.mapchat.view_model
 
-import android.app.DownloadManager
+
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mapchat.model.Messages
+import com.example.mapchat.model.UserMessages
 import com.example.mapchat.model.Users
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -19,7 +20,8 @@ class ChatViewModel : ViewModel() {
     private var message = ArrayList<Messages>()
     private val isLoading = MutableLiveData<Boolean>()
     private val isError = MutableLiveData<String>()
-    private val sendMessage = MutableLiveData<String>()
+    private val sendMessage = MutableLiveData<Boolean>()
+    private val isSendUserUpdated = MutableLiveData<Boolean>()
 
     // get single user
     fun getSingleUser(userId: String): MutableLiveData<Users> {
@@ -35,9 +37,14 @@ class ChatViewModel : ViewModel() {
     }
 
 
-    fun updateMessages(uniqueId: String, messages: Messages): MutableLiveData<String> {
+    fun updateMessages(uniqueId: String, messages: Messages): MutableLiveData<Boolean> {
         sendMessageToFireBase(uniqueId, messages)
         return sendMessage
+    }
+
+    fun updateSendUserData(uniqueId: String, userMessages: UserMessages): MutableLiveData<Boolean> {
+        sendUserData(uniqueId, userMessages)
+        return isSendUserUpdated
     }
 
     private fun getFirebaseSingleUser(usesId: String) {
@@ -86,10 +93,20 @@ class ChatViewModel : ViewModel() {
     private fun sendMessageToFireBase(uniqueId: String, messages: Messages) {
         db.collection("Messages").document(uniqueId).collection("PrivateMessage").document()
             .set(messages).addOnCompleteListener {
-                sendMessage.value = "Succesfully Uploaded"
+                sendMessage.value = true
             }.addOnFailureListener {
-                sendMessage.value = "Error"
+                sendMessage.value = false
                 isError.value = it.message
+            }
+    }
+
+    private fun sendUserData(uniqueId: String, userMessages: UserMessages) {
+        db.collection("Messages").document(uniqueId)
+            .set(userMessages).addOnCompleteListener {
+                isSendUserUpdated.value = true
+            }
+            .addOnFailureListener {
+                isSendUserUpdated.value = false
             }
     }
 
