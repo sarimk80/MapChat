@@ -19,6 +19,14 @@
             app:title="Sarim Khan"
             app:titleTextAppearance="@style/ToolbarTitle" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/user_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+
+            />
+
     </LinearLayout>
 
 </layout>
