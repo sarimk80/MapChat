@@ -47,6 +47,7 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.Property
 import com.tbruyelle.rxpermissions2.RxPermissions
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 /**
@@ -57,7 +58,7 @@ class MapFragment : Fragment() {
     private val mAuth: FirebaseAuth by inject()
     private lateinit var fragmentMapBinding: FragmentMapBinding
     private lateinit var locationManager: LocationManager
-    private lateinit var mapViewModel: MapViewModel
+    private val mapViewModel: MapViewModel by viewModel()
     private lateinit var location: Location
     private lateinit var symbol: Symbol
     private val customMarker: String = "CustomMarker"
@@ -75,8 +76,8 @@ class MapFragment : Fragment() {
 
 
         val rxPermissions = RxPermissions(this)
-        mapViewModel =
-            ViewModelProvider(this, defaultViewModelProviderFactory).get(MapViewModel::class.java)
+//        mapViewModel =
+//            ViewModelProvider(this, defaultViewModelProviderFactory).get(MapViewModel::class.java)
 
         rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION).subscribe {
             if (it) {
@@ -127,7 +128,7 @@ class MapFragment : Fragment() {
 
 
         // Error Observer
-        mapViewModel.Error().observe(viewLifecycleOwner, Observer { error ->
+        mapViewModel.error().observe(viewLifecycleOwner, Observer { error ->
             Snackbar.make(
                 fragmentMapBinding.root,
                 "No internet Connection $error",
@@ -147,7 +148,7 @@ class MapFragment : Fragment() {
 
 
         //Progressbar Observer
-        mapViewModel.Loading().observe(viewLifecycleOwner, Observer { isLoading ->
+        mapViewModel.loading().observe(viewLifecycleOwner, Observer { isLoading ->
 
             if (isLoading) {
                 fragmentMapBinding.progressCircular.visibility = View.VISIBLE

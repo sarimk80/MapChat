@@ -5,12 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mapchat.model.Users
+import com.example.mapchat.repository.FirebaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
-class MapViewModel : ViewModel() {
+class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewModel() {
 
     val db = Firebase.firestore
 
@@ -29,40 +30,43 @@ class MapViewModel : ViewModel() {
         longitude: Double?
     ): MutableLiveData<Boolean> {
 
-        uploadData(mAuth, latitude, longitude)
-        return isUploaded
+
+        return firebaseRepository.uploadDataToFirebase(mAuth, latitude, longitude)
     }
 
+    //TODO: DELETE in refactoring
     fun updateUserFriendList(userId: String, friendId: List<String>): MutableLiveData<Boolean> {
         updateFriendList(userId, friendId)
         return isFriend
     }
 
     // get single user
+    //TODO: DELETE in refactoring
     fun getSingleUser(userId: String): MutableLiveData<Users> {
 
-        getFirebaseSingleUser(userId)
-        return singleUser
+        //getFirebaseSingleUser(userId)
+        return firebaseRepository.getSingleUser(userId)
     }
 
     // get list of users
     fun getUserList(): MutableLiveData<List<Users>> {
 
-        getSuspendUsersList()
-        return usersList
+        //getSuspendUsersList()
+        return firebaseRepository.getUserList()
     }
 
     // loading indicator
-    fun Loading(): LiveData<Boolean> {
+    fun loading(): LiveData<Boolean> {
         return isLoading
     }
 
     // error indicator
-    fun Error(): LiveData<String> {
+    fun error(): LiveData<String> {
         return isError
     }
 
 
+    // TODO: NOT using delete in refactoring
     private fun updateFriendList(userId: String, friendId: List<String>) {
 
         val updateRef = db.collection("Users").document(userId)
@@ -78,6 +82,7 @@ class MapViewModel : ViewModel() {
     }
 
 
+    //TODO: DELETE in refactoring
     private fun getFirebaseSingleUser(usesId: String) {
         db.collection("Users").document(usesId)
             .addSnapshotListener { snapshot, error ->
@@ -93,6 +98,7 @@ class MapViewModel : ViewModel() {
             }
     }
 
+    //TODO: DELETE in refactoring
     private fun getSuspendUsersList() {
 
         isLoading.value = true
@@ -127,6 +133,7 @@ class MapViewModel : ViewModel() {
 
     }
 
+    //TODO: DELETE in refactoring
     private fun uploadData(mAuth: FirebaseAuth, latitude: Double?, longitude: Double?) {
 
         isLoading.value = true

@@ -1,8 +1,10 @@
 package com.example.mapchat.view_model
 
+import android.app.DownloadManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mapchat.model.UserMessages
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -26,7 +28,7 @@ class UserViewModel : ViewModel() {
 
         isLoading.value = true
 
-        db.collection("Messages")
+        db.collection("Messages").orderBy("date", Query.Direction.ASCENDING)
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
 
                 if (querySnapshot != null) {

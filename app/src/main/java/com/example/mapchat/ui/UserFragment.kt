@@ -2,7 +2,7 @@ package com.example.mapchat.ui
 
 
 import android.os.Bundle
-import android.util.Log
+
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +12,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mapchat.R
+import com.example.mapchat.adapters.FriendMessageAdapter
+import com.example.mapchat.adapters.MessageDecoration
 import com.example.mapchat.databinding.FragmentUserBinding
 import com.example.mapchat.view_model.UserViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.android.ext.android.inject
 
@@ -27,7 +31,10 @@ class UserFragment : Fragment() {
     private lateinit var fragmentUserBinding: FragmentUserBinding
     private val mAuth: FirebaseAuth by inject()
     private lateinit var userViewModel: UserViewModel
-    private val TAG: String = "UserFragment"
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var friendMessageAdapter: FriendMessageAdapter
+
+    private var recyclerView: RecyclerView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +44,8 @@ class UserFragment : Fragment() {
 
         (activity as AppCompatActivity).setSupportActionBar(fragmentUserBinding.toolbarUser)
         fragmentUserBinding.toolbarUser.title = mAuth.currentUser?.displayName
+
+        recyclerView = fragmentUserBinding.root.findViewById(R.id.user_recyclerView) as RecyclerView
 
         userViewModel =
             ViewModelProvider(this, defaultViewModelProviderFactory).get(UserViewModel::class.java)
@@ -52,11 +61,37 @@ class UserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        linearLayoutManager.stackFromEnd = false
+        linearLayoutManager.reverseLayout = false
+        linearLayoutManager.isSmoothScrollbarEnabled = true
+        recyclerView!!.layoutManager = linearLayoutManager
+        recyclerView!!.addItemDecoration(MessageDecoration(0, 0, 10))
+
         userViewModel.getAllFriends().observe(viewLifecycleOwner, Observer { friends ->
 
-            friends.forEach { userFriends ->
 
-                Log.e(TAG, "onViewCreated: ${userFriends.friendUser?.name}")
+            friendMessageAdapter = FriendMessageAdapter(context!!, friends)
+            recyclerView!!.adapter = friendMessageAdapter
+
+            friendMessageAdapter.notifyDataSetChanged()
+
+        })
+
+        userViewModel.loading().observe(viewLifecycleOwner, Observer { isLoading ->
+
+            if (isLoading) {
+                fragmentUserBinding.userProgress.visibility = View.VISIBLE
+            } else {
+                fragmentUserBinding.userProgress.visibility = View.INVISIBLE
+            }
+        })
+
+        userViewModel.error().observe(viewLifecycleOwner, Observer { error ->
+
+            if (error != null) {
+                Snackbar.make(fragmentUserBinding.root, error, Snackbar.LENGTH_LONG).show()
             }
         })
 

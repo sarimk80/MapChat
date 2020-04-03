@@ -89,7 +89,7 @@ class ChatFragment : Fragment() {
         linearLayoutManager.reverseLayout = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView!!.layoutManager = linearLayoutManager
-        recyclerView!!.addItemDecoration(MessageDecoration())
+        recyclerView!!.addItemDecoration(MessageDecoration(10,10,10))
 
         charViewModel.getSingleUser(friendId)
             .observe(viewLifecycleOwner, Observer { user ->

@@ -2,7 +2,7 @@
 
 <layout>
 
-    <data class="friendsMessage">
+    <data class="Friendmessage">
 
         <variable
             name="friends"
@@ -32,16 +32,17 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start||center"
+                    android:layout_gravity="start|center"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="start||center"
+                        android:layout_gravity="center"
                         android:layout_marginEnd="20dp"
-                        android:contentDescription="@string/app_name"
-                        android:src='@{friends.friendUser.imageUrl,default="@drawable/ic_person_black_24dp"}' />
+                        android:background="@drawable/ic_person_black_24dp"
+                        android:contentDescription="@string/app_name" />
+                    <!--android:src='@{friends.friendUser.imageUrl,default="@drawable/ic_person_black_24dp"}'-->
 
 
                     <LinearLayout
@@ -75,7 +76,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end||center"
+                    android:layout_gravity="end|center"
                     android:background="@drawable/ic_outline_arrow_forward_ios_24"
                     android:contentDescription="@string/app_name" />
 
