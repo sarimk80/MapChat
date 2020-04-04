@@ -8,6 +8,10 @@
             name="friends"
             type="com.example.mapchat.model.UserMessages" />
 
+        <variable
+            name="event"
+            type="com.example.mapchat.event.FriendListEvent" />
+
 
     </data>
 
@@ -20,6 +24,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="@{(v)->event.onFriendClick()}"
             app:cardBackgroundColor="@color/colorBackground"
             app:cardCornerRadius="5dp"
             app:cardElevation="0dp">
@@ -40,9 +45,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginEnd="20dp"
-                        android:background="@drawable/ic_person_black_24dp"
-                        android:contentDescription="@string/app_name" />
-                    <!--android:src='@{friends.friendUser.imageUrl,default="@drawable/ic_person_black_24dp"}'-->
+                        android:contentDescription="@string/app_name"
+                        app:imageUrl="@{friends.friendUser.imageUrl}" />
 
 
                     <LinearLayout

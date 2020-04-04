@@ -113,7 +113,7 @@ class MapFragment : Fragment() {
         }
 
 
-        fragmentMapBinding.mapBox?.onCreate(savedInstanceState)
+        fragmentMapBinding.mapBox.onCreate(savedInstanceState)
 
 
         return fragmentMapBinding.root

@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 //
 //}
 
-@BindingAdapter("bind:imageUrl")
+@BindingAdapter("app:imageUrl")
 fun loadImage(view: ImageView, imageUrl: String?) {
 
     Glide.with(view.context).load(imageUrl)

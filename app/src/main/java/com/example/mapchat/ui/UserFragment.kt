@@ -22,6 +22,7 @@ import com.example.mapchat.view_model.UserViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * A simple [Fragment] subclass.
@@ -30,7 +31,7 @@ class UserFragment : Fragment() {
 
     private lateinit var fragmentUserBinding: FragmentUserBinding
     private val mAuth: FirebaseAuth by inject()
-    private lateinit var userViewModel: UserViewModel
+    private val userViewModel: UserViewModel by viewModel()
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var friendMessageAdapter: FriendMessageAdapter
 
@@ -47,8 +48,8 @@ class UserFragment : Fragment() {
 
         recyclerView = fragmentUserBinding.root.findViewById(R.id.user_recyclerView) as RecyclerView
 
-        userViewModel =
-            ViewModelProvider(this, defaultViewModelProviderFactory).get(UserViewModel::class.java)
+//        userViewModel =
+//            ViewModelProvider(this, defaultViewModelProviderFactory).get(UserViewModel::class.java)
 
         fragmentUserBinding.toolbarUser.setNavigationOnClickListener {
             it.findNavController().navigate(R.id.action_userFragment_to_mapFragment)

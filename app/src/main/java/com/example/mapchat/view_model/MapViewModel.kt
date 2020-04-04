@@ -4,11 +4,15 @@ package com.example.mapchat.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mapchat.model.Users
 import com.example.mapchat.repository.FirebaseRepository
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 
 class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewModel() {
@@ -30,8 +34,18 @@ class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewMod
         longitude: Double?
     ): MutableLiveData<Boolean> {
 
-
-        return firebaseRepository.uploadDataToFirebase(mAuth, latitude, longitude)
+        isLoading.value = true
+        viewModelScope.launch {
+            try {
+                isUploaded.value =
+                    firebaseRepository.uploadDataToFirebase(mAuth, latitude, longitude)
+                isLoading.value = false
+            } catch (e: FirebaseFirestoreException) {
+                isError.value = e.message
+                isLoading.value = false
+            }
+        }
+        return isUploaded
     }
 
     //TODO: DELETE in refactoring
@@ -51,8 +65,19 @@ class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewMod
     // get list of users
     fun getUserList(): MutableLiveData<List<Users>> {
 
-        //getSuspendUsersList()
-        return firebaseRepository.getUserList()
+        isLoading.value = true
+        viewModelScope.launch {
+            try {
+                usersList.value = firebaseRepository.getUserList()
+                isLoading.value = false
+            } catch (e: FirebaseException) {
+                isLoading.value = false
+                isError.value = e.message
+            } finally {
+                isLoading.value = false
+            }
+        }
+        return usersList
     }
 
     // loading indicator

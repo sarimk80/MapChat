@@ -13,7 +13,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import convertToAscii
 
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,7 +39,7 @@ import java.util.*
 class ChatFragment : Fragment() {
 
     private lateinit var fragmentChatBinding: FragmentChatBinding
-    private lateinit var charViewModel: ChatViewModel
+    private val charViewModel: ChatViewModel by viewModel()
     private val mAuth: FirebaseAuth by inject()
     private lateinit var geocoder: Geocoder
     private var asciiCode: String = ""
@@ -68,8 +68,8 @@ class ChatFragment : Fragment() {
             it.findNavController().navigate(R.id.action_chatFragment_to_mapFragment)
         }
 
-        charViewModel =
-            ViewModelProvider(this, defaultViewModelProviderFactory).get(ChatViewModel::class.java)
+//        charViewModel =
+//            ViewModelProvider(this, defaultViewModelProviderFactory).get(ChatViewModel::class.java)
 
         geocoder = Geocoder(context, Locale.getDefault())
 
@@ -89,21 +89,23 @@ class ChatFragment : Fragment() {
         linearLayoutManager.reverseLayout = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView!!.layoutManager = linearLayoutManager
-        recyclerView!!.addItemDecoration(MessageDecoration(10,10,10))
+        recyclerView!!.addItemDecoration(MessageDecoration(10, 10, 10))
 
-        charViewModel.getSingleUser(friendId)
+        charViewModel.getCoroutineSingleUser(friendId)
             .observe(viewLifecycleOwner, Observer { user ->
-
-                fragmentChatBinding.user = user
-                Glide.with(this).load(user.imageUrl).placeholder(R.drawable.ic_person_black_24dp)
-                    .error(R.drawable.ic_person_black_24dp).into(fragmentChatBinding.imgFriend)
-
-//                val address = geocoder.getFromLocation(user.latitude!!, user.longitude!!, 1)
-
-                fragmentChatBinding.city = getCity(user.latitude, user.longitude)
 
                 if (user != null) {
                     friendUser = user
+                    fragmentChatBinding.user = user
+                    Glide.with(this).load(user.imageUrl)
+                        .placeholder(R.drawable.ic_person_black_24dp)
+                        .error(R.drawable.ic_person_black_24dp).into(fragmentChatBinding.imgFriend)
+
+
+                    fragmentChatBinding.city = getCity(user.latitude, user.longitude)
+                    Log.d("ChatFragment", "onViewCreated: ${user.name}")
+                } else {
+                    Log.d("ChatFragment", "onViewCreated: is empty")
                 }
             })
 
@@ -113,7 +115,6 @@ class ChatFragment : Fragment() {
                 Observer { data ->
 
                     if (data.isEmpty()) {
-                        Log.d("ChatFragment", data.size.toString())
                     } else {
                         messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
 

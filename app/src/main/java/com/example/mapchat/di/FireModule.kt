@@ -2,7 +2,9 @@ package com.example.mapchat.di
 
 import com.example.mapchat.R
 import com.example.mapchat.repository.FirebaseRepository
+import com.example.mapchat.view_model.ChatViewModel
 import com.example.mapchat.view_model.MapViewModel
+import com.example.mapchat.view_model.UserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -14,10 +16,23 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 
-val ViewModelModule = module {
+val mapVewModelModule = module {
     viewModel {
         MapViewModel(get())
     }
+}
+
+val chatViewModelModule = module {
+    viewModel {
+        ChatViewModel(get())
+    }
+
+}
+val userViewModelModule = module {
+    viewModel {
+        UserViewModel(get())
+    }
+
 }
 
 val RepositoryModule = module {

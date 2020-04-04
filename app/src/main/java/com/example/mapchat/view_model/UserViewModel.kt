@@ -3,12 +3,16 @@ package com.example.mapchat.view_model
 import android.app.DownloadManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mapchat.model.UserMessages
+import com.example.mapchat.repository.FirebaseRepository
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
-class UserViewModel : ViewModel() {
+class UserViewModel(private val firebaseRepository: FirebaseRepository) : ViewModel() {
 
     private val db = Firebase.firestore
 
@@ -20,10 +24,25 @@ class UserViewModel : ViewModel() {
 
     fun getAllFriends(): MutableLiveData<List<UserMessages>> {
 
-        getAllFriendsFromFirebase()
+        isLoading.value = true
+
+        viewModelScope.launch {
+            try {
+                allFriends.value = firebaseRepository.getAllFriends()
+                isLoading.value = false
+            } catch (e: FirebaseFirestoreException) {
+                isError.value = e.message
+                isLoading.value = false
+            } finally {
+                isLoading.value = false
+            }
+        }
+
+
         return allFriends
     }
 
+    //TODO: DELETE WHEN REFACTORING
     private fun getAllFriendsFromFirebase() {
 
         isLoading.value = true
