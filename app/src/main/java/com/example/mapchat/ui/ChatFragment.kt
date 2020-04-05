@@ -25,6 +25,7 @@ import com.example.mapchat.model.Messages
 import com.example.mapchat.model.UserMessages
 import com.example.mapchat.model.Users
 import com.example.mapchat.view_model.ChatViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import convertToAscii
 
@@ -68,9 +69,6 @@ class ChatFragment : Fragment() {
             it.findNavController().navigate(R.id.action_chatFragment_to_mapFragment)
         }
 
-//        charViewModel =
-//            ViewModelProvider(this, defaultViewModelProviderFactory).get(ChatViewModel::class.java)
-
         geocoder = Geocoder(context, Locale.getDefault())
 
         return fragmentChatBinding.root
@@ -103,9 +101,9 @@ class ChatFragment : Fragment() {
 
 
                     fragmentChatBinding.city = getCity(user.latitude, user.longitude)
-                    Log.d("ChatFragment", "onViewCreated: ${user.name}")
+                    
                 } else {
-                    Log.d("ChatFragment", "onViewCreated: is empty")
+
                 }
             })
 
@@ -115,6 +113,11 @@ class ChatFragment : Fragment() {
                 Observer { data ->
 
                     if (data.isEmpty()) {
+                        Snackbar.make(
+                            fragmentChatBinding.root,
+                            "Start Conversation",
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     } else {
                         messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
 
@@ -156,7 +159,7 @@ class ChatFragment : Fragment() {
 
 
         charViewModel.error().observe(viewLifecycleOwner, Observer { error ->
-            Log.d("ChatFragment", error)
+            Snackbar.make(fragmentChatBinding.root, error, Snackbar.LENGTH_SHORT).show()
         })
 
 

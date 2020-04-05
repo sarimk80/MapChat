@@ -3,6 +3,7 @@ package com.example.mapchat.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.example.mapchat.R
 import com.example.mapchat.databinding.ActivityMainBinding
@@ -73,6 +74,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+
+        binding.progressMain.visibility = View.VISIBLE
+
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
         mAuth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
@@ -82,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(binding.root, "Sign in failed", Snackbar.LENGTH_LONG).show()
 
             }
+            binding.progressMain.visibility = View.INVISIBLE
         }
     }
 
@@ -92,6 +97,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUi(user: FirebaseUser?) {
+        binding.progressMain.visibility = View.INVISIBLE
         if (user != null) {
             val intent = Intent(this, Home::class.java)
             startActivity(intent)

@@ -43,27 +43,6 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
             false
         }
 
-//        db.collection("Users").document(mAuth.currentUser!!.uid)
-//            .set(
-//                Users(
-//                    mAuth.currentUser!!.uid,
-//                    mAuth.currentUser!!.displayName,
-//                    mAuth.currentUser!!.email,
-//                    mAuth.currentUser!!.phoneNumber,
-//                    listOf(),
-//                    mAuth.currentUser!!.photoUrl.toString(),
-//                    latitude,
-//                    longitude
-//                )
-//            ).addOnCompleteListener { reference ->
-//                isUploaded.value = true
-//                // isLoading.value = false
-//            }.addOnFailureListener { e ->
-//                // isError.value = e.message
-//                isUploaded.value = false
-//            }
-
-
     }
 
 
@@ -75,31 +54,9 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
             data.toObject(Users::class.java)
 
         } catch (e: FirebaseException) {
-            Log.d("Repository", e.message!!)
             null
         }
 
-    }
-
-    fun getSingleUser(userId: String): MutableLiveData<Users> {
-        val singleUser = MutableLiveData<Users>()
-
-
-        db.collection("Users").document(userId).addSnapshotListener { snapshot, error ->
-
-            if (snapshot != null) {
-
-                singleUser.value = snapshot.toObject(Users::class.java)
-            } else {
-                singleUser.value = null
-            }
-            if (error != null) {
-
-            }
-
-        }
-
-        return singleUser
     }
 
 
@@ -119,34 +76,11 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
             null
         }
 
-//        db.collection("Users").addSnapshotListener { snapshot, e ->
-//            if (snapshot!!.isEmpty) {
-//                Log.d("FirebaseRepository", "getUserList: ")
-//            } else {
-//
-//                for (documents in snapshot.documents) {
-//                    userList.add(documents.toObject(Users::class.java)!!)
-//
-//
-//                }
-//                userMutableList.value = userList
-//
-//
-//            }
-//
-//            if (e != null) {
-//                Log.d("FirebaseRepository", "getUserList: ")
-//            }
-//
-//
-//        }
-
     }
 
 
     suspend fun getAllMessagesFromFriend(uniqueId: String): List<Messages>? {
 
-        val messagesMutableList = MutableLiveData<List<Messages>>()
         val messagesList = ArrayList<Messages>()
 
         return try {
@@ -162,53 +96,7 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
             null
         }
 
-//        db.collection("Messages").document(uniqueId).collection("PrivateMessage")
-//            .orderBy("date", Query.Direction.DESCENDING)
-//            .addSnapshotListener { snapshot, error ->
-//
-//                if (snapshot != null) {
-//                    messagesList.clear()
-//                    for (documents in snapshot.documents) {
-//                        messagesList.add(documents.toObject(Messages::class.java)!!)
-//                    }
-//                    //isLoading.value = false
-//                    messagesMutableList.value = messagesList
-//                } else {
-////                    isLoading.value = false
-////                    isError.value = "No Messages"
-//                }
-//
-//                if (error != null) {
-////                    isLoading.value = false
-////                    isError.value = error.message
-//                }
-//            }
-
-
     }
-
-//
-//    private fun returnListOfMessages(uniqueId: String): ArrayList<Messages> {
-//        val messageList = ArrayList<Messages>()
-//
-//        db.collection("Messages").document(uniqueId).collection("PrivateMessage")
-//            .orderBy("date", Query.Direction.DESCENDING)
-//            .addSnapshotListener { querySnapshot, _ ->
-//
-//                if (querySnapshot != null) {
-//
-//                    messageList.clear()
-//                    for (documents in querySnapshot.documents) {
-//                        messageList.add(documents.toObject(Messages::class.java)!!)
-//                    }
-//
-//                }
-//
-//
-//            }
-//
-//        return messageList
-//    }
 
     fun getAllMessages(uniqueId: String): Flow<List<Messages>> = callbackFlow {
 
@@ -237,19 +125,8 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
                 .set(messages).await()
             true
         } catch (e: FirebaseException) {
-            Log.d("Repository", e.message!!)
             false
         }
-
-//        db.collection("Messages").document(uniqueId).collection("PrivateMessage").document()
-//            .set(messages).addOnCompleteListener {
-//                isSend.value = true
-//            }.addOnFailureListener {
-//                isSend.value = false
-//
-//            }
-
-        return true
 
     }
 
@@ -258,21 +135,10 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
         userMessages: UserMessages
     ): Boolean {
 
-        //val isSend = MutableLiveData<Boolean>()
-
-//        db.collection("Messages").document(uniqueId)
-//            .set(userMessages).addOnCompleteListener {
-//                isSend.value = true
-//            }
-//            .addOnFailureListener {
-//                isSend.value = false
-//            }
-
         return try {
             db.collection("Messages").document(uniqueId).set(userMessages).await()
             true
         } catch (e: FirebaseException) {
-            Log.d("Repository", e.message!!)
             false
         }
     }
@@ -280,7 +146,6 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
     suspend fun getAllFriends(): List<UserMessages>? {
 
-        //val friendMutableList = MutableLiveData<List<UserMessages>>()
         val friendList = ArrayList<UserMessages>()
 
         return try {
@@ -293,33 +158,10 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
             friendList
         } catch (e: FirebaseFirestoreException) {
-            Log.d("Repository", e.message!!)
+
             null
         }
 
-
-//
-//        db.collection("Messages").orderBy("date", Query.Direction.ASCENDING)
-//            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-//
-//                if (querySnapshot != null) {
-//                    friendList.clear()
-//
-//                    for (documents in querySnapshot.documents) {
-//                        friendList.add(documents.toObject(UserMessages::class.java)!!)
-//                    }
-//
-//                    friendMutableList.value = friendList
-//                }
-//
-//                if (firebaseFirestoreException != null) {
-//
-//                }
-//
-//            }
-
-
     }
-
 
 }
