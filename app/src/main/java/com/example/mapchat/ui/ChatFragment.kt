@@ -21,6 +21,7 @@ import com.example.mapchat.R
 import com.example.mapchat.adapters.MessageAdapter
 import com.example.mapchat.adapters.MessageDecoration
 import com.example.mapchat.databinding.FragmentChatBinding
+import com.example.mapchat.helper.getCity
 import com.example.mapchat.model.Messages
 import com.example.mapchat.model.UserMessages
 import com.example.mapchat.model.Users
@@ -42,7 +43,6 @@ class ChatFragment : Fragment() {
     private lateinit var fragmentChatBinding: FragmentChatBinding
     private val charViewModel: ChatViewModel by viewModel()
     private val mAuth: FirebaseAuth by inject()
-    private lateinit var geocoder: Geocoder
     private var asciiCode: String = ""
     private var friendId: String = ""
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -69,7 +69,6 @@ class ChatFragment : Fragment() {
             it.findNavController().navigate(R.id.action_chatFragment_to_mapFragment)
         }
 
-        geocoder = Geocoder(context, Locale.getDefault())
 
         return fragmentChatBinding.root
     }
@@ -100,9 +99,7 @@ class ChatFragment : Fragment() {
                         .error(R.drawable.ic_person_black_24dp).into(fragmentChatBinding.imgFriend)
 
 
-                    fragmentChatBinding.city = getCity(user.latitude, user.longitude)
-                    
-                } else {
+                    fragmentChatBinding.city = getCity(user.latitude, user.longitude, context!!)
 
                 }
             })
@@ -166,19 +163,19 @@ class ChatFragment : Fragment() {
     }
 
 
-    private fun getCity(latitude: Double?, longitude: Double?): String {
-
-        val city: String
-        city = try {
-            val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
-            address[0].locality + ", " + address[0].countryName
-        } catch (e: Throwable) {
-            "Earth"
-        }
-
-
-        return city
-    }
+//    private fun getCity(latitude: Double?, longitude: Double?): String {
+//
+//        val city: String
+//        city = try {
+//            val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
+//            address[0].locality + ", " + address[0].countryName
+//        } catch (e: Throwable) {
+//            "Earth"
+//        }
+//
+//
+//        return city
+//    }
 
     @SuppressLint("SimpleDateFormat")
     private fun sendMessageToDataBase() {

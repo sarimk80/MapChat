@@ -50,7 +50,7 @@
                         android:id="@+id/msg"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
+                        android:layout_gravity="start"
                         android:layout_margin="10dp"
                         android:fontFamily="@font/lato"
                         android:text='@{message.text,default="First Message"}'
@@ -60,7 +60,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="start"
+                        android:layout_gravity="end"
                         android:layout_margin="10dp"
                         android:fontFamily="@font/lato_light"
                         android:text="@{message.date}"

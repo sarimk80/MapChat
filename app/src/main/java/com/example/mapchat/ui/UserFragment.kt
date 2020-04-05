@@ -92,7 +92,7 @@ class UserFragment : Fragment() {
         userViewModel.getAllFriends().observe(viewLifecycleOwner, Observer { friends ->
 
 
-            friendMessageAdapter = FriendMessageAdapter(context!!, friends)
+            friendMessageAdapter = FriendMessageAdapter(context!!, friends, this)
             recyclerView!!.adapter = friendMessageAdapter
 
             friendMessageAdapter.notifyDataSetChanged()

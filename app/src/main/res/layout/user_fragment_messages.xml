@@ -12,6 +12,10 @@
             name="event"
             type="com.example.mapchat.event.FriendListEvent" />
 
+        <variable
+            name="city"
+            type="String" />
+
 
     </data>
 
@@ -69,7 +73,7 @@
                             android:layout_height="wrap_content"
                             android:contentDescription="@string/app_name"
                             android:fontFamily="@font/lato_light"
-                            android:text='@{friends.friendUser.name,default="My Name"}'
+                            android:text='@{city,default="My Name"}'
                             android:textSize="15sp" />
                     </LinearLayout>
 
