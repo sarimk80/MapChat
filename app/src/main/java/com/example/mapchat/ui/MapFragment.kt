@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -29,6 +30,7 @@ import com.example.mapchat.event.FragmentMapEvent
 
 import com.example.mapchat.R
 import com.example.mapchat.databinding.FragmentMapBinding
+import com.example.mapchat.model.Users
 import com.example.mapchat.view_model.MapViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -42,7 +44,14 @@ import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.Property
+import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.tbruyelle.rxpermissions2.RxPermissions
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -58,7 +67,7 @@ class MapFragment : Fragment() {
     private val mapViewModel: MapViewModel by viewModel()
     private lateinit var location: Location
     private lateinit var symbol: Symbol
-    private val customMarker: String = "CustomMarker"
+    //private val customMarker: String = "CustomMarker"
 
 
     @SuppressLint("CheckResult")
@@ -159,31 +168,52 @@ class MapFragment : Fragment() {
 
 
             fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
+
+
                 mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style))) { style ->
+                    //                    val customTarget = object : CustomTarget<Bitmap>() {
+//                        override fun onLoadCleared(placeholder: Drawable?) {
+//
+//                        }
+//
+//                        override fun onResourceReady(
+//                            resource: Bitmap,
+//                            transition: Transition<in Bitmap>?
+//                        ) {
+//                            style.addImage(customMarker, resource)
+//                        }
+//
+//                    }
 
                     user.forEach { users ->
-                        val customTarget = object : CustomTarget<Bitmap>() {
-                            override fun onLoadCleared(placeholder: Drawable?) {
 
-                            }
-
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: Transition<in Bitmap>?
-                            ) {
-                                style.addImage(customMarker, resource)
-                            }
-
-                        }
+                        Log.d(
+                            "mapFragment",
+                            "onViewCreated: ${users.latitude} - ${users.longitude}"
+                        )
                         Glide.with(this).asBitmap().load(users.imageUrl)
                             .error(R.drawable.ic_person_black_24dp)
                             .placeholder(R.drawable.ic_person_black_24dp)
-                            .into(customTarget)
+                            .into(object : CustomTarget<Bitmap>() {
+                                override fun onLoadCleared(placeholder: Drawable?) {
+                                    style.addImage(users.uuid, placeholder!!)
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Bitmap,
+                                    transition: Transition<in Bitmap>?
+                                ) {
+                                    style.addImage(users.uuid, resource)
+                                    //Log.d("mapFragment", customMarker)
+                                }
+
+                            })
+
 
                         val symbolManager =
                             SymbolManager(fragmentMapBinding.mapBox, mapboxMap, style)
                         symbolManager.iconAllowOverlap = true
-                        symbolManager.iconTranslate = arrayOf(-4f, -5f)
+                        symbolManager.iconTranslate = arrayOf(-1f, -1f)
                         symbolManager.textAllowOverlap = false
 
                         val symbolOptions: SymbolOptions = SymbolOptions()
@@ -193,7 +223,7 @@ class MapFragment : Fragment() {
                                     users.longitude!!.toDouble()
                                 )
                             )
-                            .withIconImage(customMarker)
+                            .withIconImage(users.uuid)
                             .withIconSize(0.6f)
                             .withTextField(users.uuid)
                             .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)

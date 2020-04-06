@@ -144,13 +144,16 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
     }
 
 
-    suspend fun getAllFriends(): List<UserMessages>? {
+    //TODO: CHANGE USRDID TO ACCICODE
+    suspend fun getAllFriends(userId: String): List<UserMessages>? {
 
         val friendList = ArrayList<UserMessages>()
 
         return try {
             val snapshot =
-                db.collection("Messages").orderBy("date", Query.Direction.ASCENDING).get().await()
+                db.collection("Messages")
+                    .whereEqualTo("userId", userId).orderBy("date", Query.Direction.ASCENDING).get()
+                    .await()
             friendList.clear()
             for (documents in snapshot.documents) {
                 friendList.add(documents.toObject(UserMessages::class.java)!!)

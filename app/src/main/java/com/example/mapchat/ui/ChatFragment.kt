@@ -192,7 +192,8 @@ class ChatFragment : Fragment() {
                     formatter.format(Calendar.getInstance().time)
                 )
 
-            val friendUser = UserMessages(friendUser, formatter.format(Calendar.getInstance().time))
+            val friendUser =
+                UserMessages(friendUser, formatter.format(Calendar.getInstance().time), mAuth.uid)
             charViewModel.updateMessages(asciiCode, messages)
                 .observe(viewLifecycleOwner, Observer { value ->
 

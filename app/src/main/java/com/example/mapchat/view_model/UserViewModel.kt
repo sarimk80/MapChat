@@ -21,13 +21,13 @@ class UserViewModel(private val firebaseRepository: FirebaseRepository) : ViewMo
     private val isError = MutableLiveData<String>()
 
 
-    fun getAllFriends(): MutableLiveData<List<UserMessages>> {
+    fun getAllFriends(userId: String): MutableLiveData<List<UserMessages>> {
 
         isLoading.value = true
 
         viewModelScope.launch {
             try {
-                allFriends.value = firebaseRepository.getAllFriends()
+                allFriends.value = firebaseRepository.getAllFriends(userId)
                 isLoading.value = false
             } catch (e: FirebaseFirestoreException) {
                 isError.value = e.message

@@ -89,13 +89,17 @@ class UserFragment : Fragment() {
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration(0, 0, 10))
 
-        userViewModel.getAllFriends().observe(viewLifecycleOwner, Observer { friends ->
+        userViewModel.getAllFriends(mAuth.uid!!).observe(viewLifecycleOwner, Observer { friends ->
 
+            if (friends != null) {
+                friendMessageAdapter = FriendMessageAdapter(context!!, friends, this)
+                recyclerView!!.adapter = friendMessageAdapter
 
-            friendMessageAdapter = FriendMessageAdapter(context!!, friends, this)
-            recyclerView!!.adapter = friendMessageAdapter
+                friendMessageAdapter.notifyDataSetChanged()
+            } else {
+                Snackbar.make(fragmentUserBinding.root, "No messages", Snackbar.LENGTH_LONG).show()
+            }
 
-            friendMessageAdapter.notifyDataSetChanged()
 
         })
 
