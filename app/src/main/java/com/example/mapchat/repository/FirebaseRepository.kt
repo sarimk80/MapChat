@@ -26,7 +26,7 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
     ): Boolean {
 
         return try {
-            val snapshot = db.collection("Users").document(mAuth.currentUser!!.uid).set(
+            db.collection("Users").document(mAuth.currentUser!!.uid).set(
                 Users(
                     mAuth.currentUser!!.uid,
                     mAuth.currentUser!!.displayName,
@@ -143,6 +143,48 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
         }
     }
 
+    suspend fun getFriendsCheck(
+        myId: String,
+        friendId: String,
+        myData: UserMessages,
+        friendData: UserMessages
+    ): Boolean {
+
+        return try {
+            db.collection("Users").document(friendId).collection("FriendsCheck").document(myId)
+                .set(myData).await()
+
+            db.collection("Users").document(myId).collection("FriendsCheck").document(friendId)
+                .set(friendData)
+                .await()
+
+
+            true
+        } catch (e: FirebaseFirestoreException) {
+            false
+        }
+
+
+    }
+
+    suspend fun getAllFriendsCheck(myUserId: String): List<UserMessages>? {
+
+        val friendCheck = ArrayList<UserMessages>()
+
+        return try {
+            val snapshot = db.collection("Users").document(myUserId).collection("FriendsCheck")
+                .orderBy("date", Query.Direction.ASCENDING).get().await()
+            friendCheck.clear()
+            for (documents in snapshot.documents) {
+                friendCheck.add(documents.toObject(UserMessages::class.java)!!)
+            }
+
+            friendCheck
+        } catch (e: FirebaseFirestoreException) {
+
+            null
+        }
+    }
 
     //TODO: CHANGE USRDID TO ACCICODE
     suspend fun getAllFriends(userId: String): List<UserMessages>? {

@@ -182,7 +182,7 @@ class ChatFragment : Fragment() {
 
         if (fragmentChatBinding.edtMessage.text.isNotEmpty()) {
 
-            val formatter = SimpleDateFormat("MM/dd/yy HH:mm aa")
+            val formatter = SimpleDateFormat("MM/dd/yy hh:mm a")
 
             val messages =
                 Messages(
@@ -192,15 +192,37 @@ class ChatFragment : Fragment() {
                     formatter.format(Calendar.getInstance().time)
                 )
 
-            val friendUser =
+            val friendData =
                 UserMessages(friendUser, formatter.format(Calendar.getInstance().time), mAuth.uid)
+            val myData =
+                UserMessages(
+                    Users(
+                        mAuth.uid!!,
+                        mAuth.currentUser?.displayName,
+                        mAuth.currentUser?.email,
+                        mAuth.currentUser?.phoneNumber,
+                        listOf(),
+                        mAuth.currentUser?.photoUrl.toString(),
+                        0.0,
+                        0.0
+                    ),
+                    formatter.format(Calendar.getInstance().time),
+                    friendUser.uuid
+                )
+
             charViewModel.updateMessages(asciiCode, messages)
                 .observe(viewLifecycleOwner, Observer { value ->
 
                     if (value == true) {
-                        charViewModel.updateSendUserData(asciiCode, friendUser)
-                            .observe(viewLifecycleOwner,
-                                Observer {})
+                        charViewModel.updateFriendCheckList(
+                            mAuth.uid!!,
+                            friendUser.uuid,
+                            myData,
+                            friendData
+                        ).observe(viewLifecycleOwner, Observer { })
+//                        charViewModel.updateSendUserData(asciiCode, friendUser)
+//                            .observe(viewLifecycleOwner,
+//                                Observer {})
                     }
 
 

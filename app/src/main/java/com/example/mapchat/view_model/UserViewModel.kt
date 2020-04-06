@@ -27,7 +27,7 @@ class UserViewModel(private val firebaseRepository: FirebaseRepository) : ViewMo
 
         viewModelScope.launch {
             try {
-                allFriends.value = firebaseRepository.getAllFriends(userId)
+                allFriends.value = firebaseRepository.getAllFriendsCheck(userId)
                 isLoading.value = false
             } catch (e: FirebaseFirestoreException) {
                 isError.value = e.message
