@@ -2,9 +2,7 @@ package com.example.mapchat.ui
 
 
 import android.annotation.SuppressLint
-import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +46,7 @@ class ChatFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var friendUser: Users
+    private lateinit var currentUser: Users
 
     private var recyclerView: RecyclerView? = null
 
@@ -104,6 +103,12 @@ class ChatFragment : Fragment() {
                 }
             })
 
+        charViewModel.getCoroutineSingleUser(mAuth.uid!!).observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                currentUser = it
+            }
+        })
+
 
         charViewModel.getAllMessages(asciiCode)
             .observe(viewLifecycleOwner,
@@ -119,7 +124,7 @@ class ChatFragment : Fragment() {
                         messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
 
                         recyclerView!!.adapter = messageAdapter
-                        recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount + 1)
+                        recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount - 1)
                         messageAdapter.notifyDataSetChanged()
 
                     }
@@ -163,20 +168,6 @@ class ChatFragment : Fragment() {
     }
 
 
-//    private fun getCity(latitude: Double?, longitude: Double?): String {
-//
-//        val city: String
-//        city = try {
-//            val address = geocoder.getFromLocation(latitude!!, longitude!!, 1)
-//            address[0].locality + ", " + address[0].countryName
-//        } catch (e: Throwable) {
-//            "Earth"
-//        }
-//
-//
-//        return city
-//    }
-
     @SuppressLint("SimpleDateFormat")
     private fun sendMessageToDataBase() {
 
@@ -196,16 +187,7 @@ class ChatFragment : Fragment() {
                 UserMessages(friendUser, formatter.format(Calendar.getInstance().time), mAuth.uid)
             val myData =
                 UserMessages(
-                    Users(
-                        mAuth.uid!!,
-                        mAuth.currentUser?.displayName,
-                        mAuth.currentUser?.email,
-                        mAuth.currentUser?.phoneNumber,
-                        listOf(),
-                        mAuth.currentUser?.photoUrl.toString(),
-                        0.0,
-                        0.0
-                    ),
+                    currentUser,
                     formatter.format(Calendar.getInstance().time),
                     friendUser.uuid
                 )
@@ -220,9 +202,7 @@ class ChatFragment : Fragment() {
                             myData,
                             friendData
                         ).observe(viewLifecycleOwner, Observer { })
-//                        charViewModel.updateSendUserData(asciiCode, friendUser)
-//                            .observe(viewLifecycleOwner,
-//                                Observer {})
+
                     }
 
 

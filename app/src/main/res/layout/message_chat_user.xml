@@ -11,6 +11,10 @@
             name="message"
             type="com.example.mapchat.model.Messages" />
 
+        <variable
+            name="userImage"
+            type="String" />
+
     </data>
 
 
@@ -40,34 +44,50 @@
 
                 app:cardPreventCornerOverlap="false">
 
-
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/msg"
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_margin="10dp"
-                        android:fontFamily="@font/lato"
-                        android:text='@{message.text,default="First Message"}'
-                        android:textColor="@color/colorBackground"
-                        android:textSize="20sp" />
+                        android:layout_gravity="center"
+                        android:layout_margin="15dp"
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        android:contentDescription="@string/subHeading"
+                        app:imageUrl="@{userImage}" />
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_margin="10dp"
-                        android:fontFamily="@font/lato_light"
-                        android:text="@{message.date}"
-                        android:textColor="@color/colorBackground"
-                        android:textSize="15sp"
+                        android:orientation="vertical">
 
-                        />
+                        <TextView
+                            android:id="@+id/msg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_margin="10dp"
+                            android:fontFamily="@font/lato"
+                            android:text='@{message.text,default="First Message"}'
+                            android:textColor="@color/colorBackground"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_margin="10dp"
+                            android:fontFamily="@font/lato_light"
+                            android:text="@{message.date}"
+                            android:textColor="@color/colorBackground"
+                            android:textSize="15sp"
+
+                            />
+                    </LinearLayout>
+
                 </LinearLayout>
 
 
