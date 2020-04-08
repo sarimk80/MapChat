@@ -303,8 +303,8 @@ class MapFragment : Fragment() {
         val position = CameraPosition.Builder()
             .target(LatLng(location.latitude, location.longitude))
             .zoom(10.0)
-            .tilt(20.0)
-            .bearing(10.0)
+            .tilt(25.0)
+            .bearing(15.0)
             .build()
 
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000)

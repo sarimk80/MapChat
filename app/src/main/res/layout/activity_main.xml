@@ -19,6 +19,17 @@
         android:orientation="vertical"
         tools:context=".ui.MainActivity">
 
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/ic_undraw_map_1r69"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +41,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.2" />
+            app:layout_constraintVertical_bias="0.15" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,40 +54,31 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.25" />
+            app:layout_constraintVertical_bias="0.20" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="world_map.json"
-            app:lottie_loop="true" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_style"
-            android:drawableLeft="@drawable/ic_google_outline"
             android:drawablePadding="10dp"
             android:elevation="3dp"
             android:fontFamily="@font/lato_bold"
             android:onClick="@{(v)->event.signIn()}"
-            android:text="Sign in"
+            android:text="Sign in with Google"
+            android:textAllCaps="false"
             android:textColor="@color/colorBackground"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.8" />
+            app:layout_constraintVertical_bias="0.75" />
 
         <ProgressBar
             android:id="@+id/progress_main"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

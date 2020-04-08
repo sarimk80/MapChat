@@ -83,7 +83,6 @@ class ChatFragment : Fragment() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.reverseLayout = true
-        linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration(10, 10, 10))
 

@@ -22,7 +22,7 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity() {
 
 
-    private lateinit var mAuth: FirebaseAuth
+    private val mAuth: FirebaseAuth by inject()
     private lateinit var googleSignClient: GoogleSignInClient
     private val googleSignInOptions: GoogleSignInOptions by inject()
     private val GOOGLE_CODE = 1000
@@ -37,12 +37,11 @@ class MainActivity : AppCompatActivity() {
 
         googleSignClient = GoogleSignIn.getClient(this, googleSignInOptions)
 
-        mAuth = FirebaseAuth.getInstance()
 
 
         binding.event = object : MainActivityEvent {
             override fun signIn() {
-                SignIn()
+                signIn()
             }
 
         }
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun SignIn() {
+    private fun signIn() {
         val signInIntent = googleSignClient.signInIntent
 
         startActivityForResult(signInIntent, GOOGLE_CODE)
