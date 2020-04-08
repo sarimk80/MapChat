@@ -27,7 +27,23 @@ class ChatViewModel(private val firebaseRepository: FirebaseRepository) : ViewMo
     private val isError = MutableLiveData<String>()
     private val sendMessage = MutableLiveData<Boolean>()
     private val isSendUserUpdated = MutableLiveData<Boolean>()
+    private val newSingleUser = MutableLiveData<Users>()
 
+
+    fun getNewSingleUser(uniqueId: String): MutableLiveData<Users> {
+        isLoading.value = true
+        viewModelScope.launch {
+
+            try {
+                newSingleUser.value = firebaseRepository.getNewUserEveryTime(uniqueId)
+                isLoading.value = false
+            } catch (e: FirebaseFirestoreException) {
+                isError.value = e.message
+                isLoading.value = false
+            }
+        }
+        return newSingleUser
+    }
 
     fun getCoroutineSingleUser(uniqueId: String): MutableLiveData<Users> {
 

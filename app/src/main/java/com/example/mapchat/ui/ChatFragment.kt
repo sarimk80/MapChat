@@ -3,6 +3,7 @@ package com.example.mapchat.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -86,7 +87,7 @@ class ChatFragment : Fragment() {
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration(10, 10, 10))
 
-        charViewModel.getCoroutineSingleUser(friendId)
+        charViewModel.getNewSingleUser(friendId)
             .observe(viewLifecycleOwner, Observer { user ->
 
                 if (user != null) {
@@ -179,7 +180,8 @@ class ChatFragment : Fragment() {
                     mAuth.uid,
                     friendId,
                     fragmentChatBinding.edtMessage.text.toString(),
-                    formatter.format(Calendar.getInstance().time)
+                    formatter.format(Calendar.getInstance().time),
+                    friendUser.imageUrl
                 )
 
             val friendData =
@@ -214,6 +216,10 @@ class ChatFragment : Fragment() {
 
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        fragmentChatBinding.unbind()
+    }
 }
 
 

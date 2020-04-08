@@ -20,11 +20,17 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            app:imageUrl="@{message.friendImage}" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5">
+            android:layout_weight="1.5"
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -49,17 +55,7 @@
                         android:textColor="@color/colorText"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_margin="10dp"
-                        android:fontFamily="@font/lato_light"
-                        android:text="@{message.date}"
-                        android:textColor="@color/colorText"
-                        android:textSize="15sp"
 
-                        />
                 </LinearLayout>
 
                 <View
@@ -67,6 +63,18 @@
                     android:layout_height="0dp"
                     android:layout_weight="0.5" />
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_margin="10dp"
+                android:fontFamily="@font/lato_light"
+                android:text="@{message.date}"
+                android:textColor="@color/colorText"
+                android:textSize="15sp"
+
+                />
 
 
         </LinearLayout>

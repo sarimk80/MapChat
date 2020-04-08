@@ -43,9 +43,9 @@ class MessageAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return if (messageList[position].fromUuid == userId) {
-            USER_MESSAGE_BINDING
-        } else {
             FRIEND_MESSAGE_BINDING
+        } else {
+            USER_MESSAGE_BINDING
 
         }
     }

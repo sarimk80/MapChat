@@ -3,6 +3,7 @@ package com.example.mapchat.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.example.mapchat.R
@@ -35,13 +36,14 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
 
-        googleSignClient = GoogleSignIn.getClient(this, googleSignInOptions)
+        googleSignClient = GoogleSignIn.getClient(applicationContext, googleSignInOptions)
 
 
 
         binding.event = object : MainActivityEvent {
             override fun signIn() {
-                signIn()
+                Log.d("Leak", "Sign in button")
+                googleSignIn()
             }
 
         }
@@ -90,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun signIn() {
+    private fun googleSignIn() {
         val signInIntent = googleSignClient.signInIntent
 
         startActivityForResult(signInIntent, GOOGLE_CODE)

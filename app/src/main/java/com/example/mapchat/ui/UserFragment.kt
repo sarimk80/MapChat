@@ -131,4 +131,9 @@ class UserFragment : Fragment() {
             it.finish()
         }
     }
+
+    override fun onDetach() {
+        super.onDetach()
+        fragmentUserBinding.unbind()
+    }
 }

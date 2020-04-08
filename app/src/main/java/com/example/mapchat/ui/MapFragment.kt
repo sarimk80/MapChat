@@ -291,6 +291,13 @@ class MapFragment : Fragment() {
         super.onDestroy()
         fragmentMapBinding.mapBox.onDestroy()
 
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        fragmentMapBinding.unbind()
+
     }
 
     override fun onLowMemory() {

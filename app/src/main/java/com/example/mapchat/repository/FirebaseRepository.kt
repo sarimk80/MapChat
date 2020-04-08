@@ -45,6 +45,18 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
     }
 
+    suspend fun getNewUserEveryTime(uniqueId: String): Users? {
+
+        return try {
+            val data = db.collection("Users").document(uniqueId)
+            val user = db.runTransaction {
+                it.get(data)
+            }.await()
+            user.toObject(Users::class.java)
+        } catch (e: FirebaseFirestoreException) {
+            null
+        }
+    }
 
     suspend fun suspendGetSingleUser(uniqueId: String): Users? {
 
