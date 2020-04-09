@@ -7,4 +7,5 @@
     <string name="hint">Type a message</string>
     <string name="format">%1$tm %1$te,%1$tY</string>
     <string name="subHeading">where people connect with the world</string>
+    <string name="google">Sign in with Google</string>
 </resources>

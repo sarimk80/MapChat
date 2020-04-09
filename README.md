@@ -15,6 +15,9 @@
 
 ###### download the google-services.json file and add it to module (app-level) directory of your app.
 
+###### Create an account on
+[MapBox map](https://www.mapbox.com/maps/)
+###### to get the access-token-key
 ### Permissions
 
 ###### The app only require two permissions.

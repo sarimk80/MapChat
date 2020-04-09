@@ -181,7 +181,7 @@ class ChatFragment : Fragment() {
                     friendId,
                     fragmentChatBinding.edtMessage.text.toString(),
                     formatter.format(Calendar.getInstance().time),
-                    friendUser.imageUrl
+                    mAuth.currentUser?.photoUrl!!.toString()
                 )
 
             val friendData =
