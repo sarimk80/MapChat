@@ -35,3 +35,13 @@
 - [Coroutines](https://github.com/Kotlin/kotlinx.coroutines)
 - [MapBox map](https://www.mapbox.com/maps/)
 - [Glide](https://github.com/bumptech/glide)
+
+### Application Flow
+![Sign In](F:\MapChat\images\signIn.png)
+
+![Home Screen](F:\MapChat\images\home.png)
+
+
+
+
+
