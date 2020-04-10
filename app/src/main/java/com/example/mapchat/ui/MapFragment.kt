@@ -19,7 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -30,7 +29,6 @@ import com.example.mapchat.event.FragmentMapEvent
 
 import com.example.mapchat.R
 import com.example.mapchat.databinding.FragmentMapBinding
-import com.example.mapchat.model.Users
 import com.example.mapchat.view_model.MapViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -44,14 +42,7 @@ import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.Property
-import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.tbruyelle.rxpermissions2.RxPermissions
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -108,11 +99,7 @@ class MapFragment : Fragment() {
                 }
 
             } else {
-                Snackbar.make(
-                    fragmentMapBinding.root,
-                    "Permission is Required for this application",
-                    Snackbar.LENGTH_LONG
-                ).show()
+                findNavController().navigate(R.id.action_mapFragment_to_errorFragment)
             }
         }
 

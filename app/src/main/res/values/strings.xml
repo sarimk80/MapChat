@@ -7,5 +7,9 @@
     <string name="hint">Type a message</string>
     <string name="format">%1$tm %1$te,%1$tY</string>
     <string name="subHeading">where people connect with the world</string>
-    <string name="google">Sign in with Google</string>
+    <string name="google">Sign in</string>
+    <string name="link"><a href="https://github.com/sarimk80/MapChat">More about this project</a></string>
+    <string name="error">Permission Error</string>
+    <string name="explain">This application requirs two permission network and location. The network permission to connect with the internet and location permission so we can display your location on the map, this way other people can see you on the map and can chat with you.</string>
+    <string name="permission">Grant Permission</string>
 </resources>

@@ -3,6 +3,7 @@ package com.example.mapchat.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         googleSignClient = GoogleSignIn.getClient(applicationContext, googleSignInOptions)
 
+        binding.link.movementMethod = LinkMovementMethod.getInstance()
 
 
         binding.event = object : MainActivityEvent {
