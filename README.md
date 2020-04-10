@@ -37,9 +37,9 @@
 - [Glide](https://github.com/bumptech/glide)
 
 ### Application Flow
-![Sign In](F:\MapChat\images\signIn.png)
+![Sign In](https://github.com/sarimk80/MapChat/blob/master/images/signIn.png)
 
-![Home Screen](F:\MapChat\images\home.png)
+![Home Screen](https://github.com/sarimk80/MapChat/blob/master/images/home.png)
 
 
 
