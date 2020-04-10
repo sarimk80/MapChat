@@ -37,11 +37,11 @@
 - [Glide](https://github.com/bumptech/glide)
 
 ### Application Flow
-![Sign In](https://github.com/sarimk80/MapChat/blob/master/images/signIn.png =250x250)
 
-![Home Screen](https://github.com/sarimk80/MapChat/blob/master/images/home.png =250x250)
+<img src="https://github.com/sarimk80/MapChat/raw/master/images/signIn.png"
+width="300">
 
-
+<img src="https://github.com/sarimk80/MapChat/raw/master/images/home.png" width="300">
 
 
 
