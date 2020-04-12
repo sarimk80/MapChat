@@ -112,7 +112,7 @@ class ChatViewModel(private val firebaseRepository: FirebaseRepository) : ViewMo
         viewModelScope.launch {
             try {
                 isSendUserUpdated.value =
-                    firebaseRepository.getFriendsCheck(myId, friendId, myData, friendData)
+                    firebaseRepository.setFriendsCheck(myId, friendId, myData, friendData)
                 isLoading.value = false
             } catch (e: FirebaseFirestoreException) {
                 isLoading.value = false

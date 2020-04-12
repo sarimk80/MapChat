@@ -30,6 +30,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
 
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -50,15 +51,33 @@
                 app:title="@string/app_name"
                 app:titleTextAppearance="@style/ToolbarTitle">
 
-                <ImageView
-                    android:id="@+id/img_user"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="end"
-                    android:layout_margin="5dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/app_name"
-                    android:onClick="@{(v)->event.userDetail()}" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end">
+
+                    <ImageView
+                        android:id="@+id/img_user"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_margin="5dp"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/app_name"
+                        android:onClick="@{(v)->event.userDetail()}" />
+
+
+                    <ImageView
+                        android:id="@+id/badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:background="@drawable/badge"
+                        android:contentDescription="@string/subHeading"
+                        android:visibility="invisible" />
+
+                </FrameLayout>
+
             </androidx.appcompat.widget.Toolbar>
 
             <com.mapbox.mapboxsdk.maps.MapView

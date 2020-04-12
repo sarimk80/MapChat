@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapchat.model.UserMessages
 import com.example.mapchat.model.Users
 import com.example.mapchat.repository.FirebaseRepository
 import com.google.firebase.FirebaseException
@@ -23,9 +24,26 @@ class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewMod
     private val isLoading = MutableLiveData<Boolean>()
     private val isError = MutableLiveData<String>()
     private val usersList = MutableLiveData<List<Users>>()
+    private val friendsList = MutableLiveData<List<UserMessages>>()
     private val singleUser = MutableLiveData<Users>()
-    private val isFriend = MutableLiveData<Boolean>()
+    private val isFriendRead = MutableLiveData<Boolean>()
     private var users = ArrayList<Users>()
+
+
+    fun messageRead(myId: String): MutableLiveData<Boolean> {
+
+        return try {
+            viewModelScope.launch {
+                isFriendRead.value = firebaseRepository.getReadMessages(myId)
+
+            }
+            isFriendRead
+
+        } catch (e: FirebaseFirestoreException) {
+            isFriendRead.value = false
+            isFriendRead
+        }
+    }
 
     //Upload User information
     fun getUploadedResult(

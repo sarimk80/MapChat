@@ -103,6 +103,10 @@ class UserFragment : Fragment() {
 
         })
 
+        userViewModel.updateMessageRead(mAuth.uid!!)
+            .observe(viewLifecycleOwner,
+                Observer { })
+
         userViewModel.loading().observe(viewLifecycleOwner, Observer { isLoading ->
 
             if (isLoading) {

@@ -73,11 +73,12 @@ class MapFragment : Fragment() {
 
 
         val rxPermissions = RxPermissions(this)
+        locationManager =
+            (activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager?)!!
 
         rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION).subscribe {
             if (it) {
-                locationManager =
-                    (activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager?)!!
+
 
                 if (ContextCompat.checkSelfPermission(
                         context!!,
@@ -99,6 +100,8 @@ class MapFragment : Fragment() {
                 }
 
             } else {
+                location.latitude = 30.3753
+                location.longitude = 69.3451
                 findNavController().navigate(R.id.action_mapFragment_to_errorFragment)
             }
         }
@@ -112,6 +115,21 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        mapViewModel.messageRead(mAuth.uid!!).observe(viewLifecycleOwner, Observer { isRead ->
+            when (isRead) {
+                null -> {
+                    fragmentMapBinding.badge.visibility = View.INVISIBLE
+                }
+                true -> {
+                    fragmentMapBinding.badge.visibility = View.INVISIBLE
+                }
+                false -> {
+                    fragmentMapBinding.badge.visibility = View.VISIBLE
+                }
+            }
+        })
 
         Glide.with(this).load(mAuth.currentUser?.photoUrl).error(R.drawable.ic_person_black_24dp)
             .placeholder(R.drawable.ic_person_black_24dp)

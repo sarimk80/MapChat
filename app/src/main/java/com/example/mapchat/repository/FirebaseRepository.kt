@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.auth.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -155,13 +156,27 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
         }
     }
 
-    suspend fun getFriendsCheck(
+
+    suspend fun getReadMessages(myId: String): Boolean? {
+
+
+        val snapshot =
+            db.collection("Users").document(myId).collection("MessageRead").document("isRead")
+                .get()
+                .await()
+
+        return snapshot.getBoolean("isRead")
+
+    }
+
+    suspend fun setFriendsCheck(
         myId: String,
         friendId: String,
         myData: UserMessages,
         friendData: UserMessages
     ): Boolean {
 
+        val messageRead = hashMapOf("isRead" to false)
         return try {
             db.collection("Users").document(friendId).collection("FriendsCheck").document(myId)
                 .set(myData).await()
@@ -170,13 +185,24 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
                 .set(friendData)
                 .await()
 
+            db.collection("Users").document(friendId).collection("MessageRead").document("isRead")
+                .set(messageRead).await()
 
             true
         } catch (e: FirebaseFirestoreException) {
             false
         }
+    }
 
+    suspend fun updateMessagesRead(myId: String): Boolean {
 
+        return try {
+            db.collection("Users").document(myId).collection("MessageRead").document("isRead")
+                .update("isRead", true).await()
+            true
+        } catch (e: FirebaseFirestoreException) {
+            false
+        }
     }
 
     suspend fun getAllFriendsCheck(myUserId: String): List<UserMessages>? {
@@ -185,7 +211,7 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
         return try {
             val snapshot = db.collection("Users").document(myUserId).collection("FriendsCheck")
-                .orderBy("date", Query.Direction.ASCENDING).get().await()
+                .orderBy("date", Query.Direction.DESCENDING).get().await()
             friendCheck.clear()
             for (documents in snapshot.documents) {
                 friendCheck.add(documents.toObject(UserMessages::class.java)!!)
