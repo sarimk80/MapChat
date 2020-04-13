@@ -16,6 +16,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.mapchat.R
 import com.example.mapchat.adapters.MessageAdapter
 import com.example.mapchat.adapters.MessageDecoration
@@ -94,6 +95,7 @@ class ChatFragment : Fragment() {
                     friendUser = user
                     fragmentChatBinding.user = user
                     Glide.with(this).load(user.imageUrl)
+                        .apply(RequestOptions.circleCropTransform())
                         .placeholder(R.drawable.ic_person_black_24dp)
                         .error(R.drawable.ic_person_black_24dp).into(fragmentChatBinding.imgFriend)
 

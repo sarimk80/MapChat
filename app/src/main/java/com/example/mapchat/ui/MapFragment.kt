@@ -121,17 +121,21 @@ class MapFragment : Fragment() {
             when (isRead) {
                 null -> {
                     fragmentMapBinding.badge.visibility = View.INVISIBLE
+                    Log.d("MapFragment", "$isRead")
                 }
                 true -> {
                     fragmentMapBinding.badge.visibility = View.INVISIBLE
+                    Log.d("MapFragment", "$isRead")
                 }
                 false -> {
                     fragmentMapBinding.badge.visibility = View.VISIBLE
+                    Log.d("MapFragment", "$isRead")
                 }
             }
         })
 
-        Glide.with(this).load(mAuth.currentUser?.photoUrl).error(R.drawable.ic_person_black_24dp)
+        Glide.with(this).load(mAuth.currentUser?.photoUrl)
+            .error(R.drawable.ic_person_black_24dp)
             .placeholder(R.drawable.ic_person_black_24dp)
             .apply(RequestOptions.circleCropTransform()).into(fragmentMapBinding.imgUser)
 
@@ -176,19 +180,7 @@ class MapFragment : Fragment() {
 
 
                 mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style))) { style ->
-                    //                    val customTarget = object : CustomTarget<Bitmap>() {
-//                        override fun onLoadCleared(placeholder: Drawable?) {
-//
-//                        }
-//
-//                        override fun onResourceReady(
-//                            resource: Bitmap,
-//                            transition: Transition<in Bitmap>?
-//                        ) {
-//                            style.addImage(customMarker, resource)
-//                        }
-//
-//                    }
+
 
                     user.forEach { users ->
 
@@ -197,6 +189,7 @@ class MapFragment : Fragment() {
                             "onViewCreated: ${users.latitude} - ${users.longitude}"
                         )
                         Glide.with(this).asBitmap().load(users.imageUrl)
+                            .apply(RequestOptions.circleCropTransform())
                             .error(R.drawable.ic_person_black_24dp)
                             .placeholder(R.drawable.ic_person_black_24dp)
                             .into(object : CustomTarget<Bitmap>() {

@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.mapchat.R
 import java.text.SimpleDateFormat
 
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat
 fun loadImage(view: ImageView, imageUrl: String?) {
 
     Glide.with(view.context).load(imageUrl)
+        .apply(RequestOptions.circleCropTransform())
         .error(R.drawable.ic_person_black_24dp)
         .placeholder(R.drawable.ic_person_black_24dp)
         .into(view)

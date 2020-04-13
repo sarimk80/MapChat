@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -32,17 +33,16 @@ class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewMod
 
     fun messageRead(myId: String): MutableLiveData<Boolean> {
 
-        return try {
-            viewModelScope.launch {
-                isFriendRead.value = firebaseRepository.getReadMessages(myId)
-
+        viewModelScope.launch {
+            try {
+                firebaseRepository.getReadMessages(myId).collect { value ->
+                    isFriendRead.value = value
+                }
+            } catch (e: FirebaseFirestoreException) {
+                isError.value = e.message
             }
-            isFriendRead
-
-        } catch (e: FirebaseFirestoreException) {
-            isFriendRead.value = false
-            isFriendRead
         }
+        return isFriendRead
     }
 
     //Upload User information

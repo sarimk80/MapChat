@@ -157,15 +157,18 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
     }
 
 
-    suspend fun getReadMessages(myId: String): Boolean? {
+    fun getReadMessages(myId: String): Flow<Boolean?> = callbackFlow {
 
 
         val snapshot =
             db.collection("Users").document(myId).collection("MessageRead").document("isRead")
-                .get()
-                .await()
 
-        return snapshot.getBoolean("isRead")
+        val subscription = snapshot.addSnapshotListener { querySnapshot, _ ->
+            offer(querySnapshot?.getBoolean("isRead"))
+
+        }
+
+        awaitClose { subscription.remove() }
 
     }
 
