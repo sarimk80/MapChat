@@ -29,6 +29,21 @@ class MapViewModel(private val firebaseRepository: FirebaseRepository) : ViewMod
     private val singleUser = MutableLiveData<Users>()
     private val isFriendRead = MutableLiveData<Boolean>()
     private var users = ArrayList<Users>()
+    private val isTokenUploaded = MutableLiveData<Boolean>()
+
+
+    fun updateToken(token: String, userId: String): MutableLiveData<Boolean> {
+        viewModelScope.launch {
+            try {
+                firebaseRepository.uploadTokenId(token, userId)
+                isTokenUploaded.value = true
+            } catch (e: FirebaseFirestoreException) {
+                isTokenUploaded.value = false
+            }
+        }
+
+        return isTokenUploaded
+    }
 
 
     fun messageRead(myId: String): MutableLiveData<Boolean> {

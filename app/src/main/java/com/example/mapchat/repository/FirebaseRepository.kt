@@ -91,25 +91,25 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
     }
 
-
-    suspend fun getAllMessagesFromFriend(uniqueId: String): List<Messages>? {
-
-        val messagesList = ArrayList<Messages>()
-
-        return try {
-            val snapshot = db.collection("Messages").document(uniqueId).collection("PrivateMessage")
-                .orderBy("date", Query.Direction.DESCENDING).get().await()
-            messagesList.clear()
-            for (documents in snapshot.documents) {
-                messagesList.add(documents.toObject(Messages::class.java)!!)
-            }
-            messagesList
-        } catch (e: FirebaseException) {
-            Log.d("Repository", e.message!!)
-            null
-        }
-
-    }
+    //TODO: DELETE AFTER REFACTOR
+//    suspend fun getAllMessagesFromFriend(uniqueId: String): List<Messages>? {
+//
+//        val messagesList = ArrayList<Messages>()
+//
+//        return try {
+//            val snapshot = db.collection("Messages").document(uniqueId).collection("PrivateMessage")
+//                .orderBy("date", Query.Direction.DESCENDING).get().await()
+//            messagesList.clear()
+//            for (documents in snapshot.documents) {
+//                messagesList.add(documents.toObject(Messages::class.java)!!)
+//            }
+//            messagesList
+//        } catch (e: FirebaseException) {
+//            Log.d("Repository", e.message!!)
+//            null
+//        }
+//
+//    }
 
     fun getAllMessages(uniqueId: String): Flow<List<Messages>> = callbackFlow {
 
@@ -172,30 +172,6 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
     }
 
-    suspend fun setFriendsCheck(
-        myId: String,
-        friendId: String,
-        myData: UserMessages,
-        friendData: UserMessages
-    ): Boolean {
-
-        val messageRead = hashMapOf("isRead" to false)
-        return try {
-            db.collection("Users").document(friendId).collection("FriendsCheck").document(myId)
-                .set(myData).await()
-
-            db.collection("Users").document(myId).collection("FriendsCheck").document(friendId)
-                .set(friendData)
-                .await()
-
-            db.collection("Users").document(friendId).collection("MessageRead").document("isRead")
-                .set(messageRead).await()
-
-            true
-        } catch (e: FirebaseFirestoreException) {
-            false
-        }
-    }
 
     suspend fun updateMessagesRead(myId: String): Boolean {
 
@@ -227,27 +203,19 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
         }
     }
 
-    //TODO: CHANGE USRDID TO ACCICODE
-    suspend fun getAllFriends(userId: String): List<UserMessages>? {
+    suspend fun uploadTokenId(token: String, userId: String): Boolean {
 
-        val friendList = ArrayList<UserMessages>()
+        val registrationToken = hashMapOf("token" to token)
 
         return try {
-            val snapshot =
-                db.collection("Messages")
-                    .whereEqualTo("userId", userId).orderBy("date", Query.Direction.ASCENDING).get()
-                    .await()
-            friendList.clear()
-            for (documents in snapshot.documents) {
-                friendList.add(documents.toObject(UserMessages::class.java)!!)
-            }
-
-            friendList
+            db.collection("Users").document(userId).collection("TokenId").document("first")
+                .set(registrationToken).await()
+            true
         } catch (e: FirebaseFirestoreException) {
-
-            null
+            false
         }
 
     }
+
 
 }

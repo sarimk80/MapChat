@@ -3,7 +3,6 @@ package com.example.mapchat.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,8 +22,6 @@ import com.example.mapchat.adapters.MessageDecoration
 import com.example.mapchat.databinding.FragmentChatBinding
 import com.example.mapchat.helper.getCity
 import com.example.mapchat.model.Messages
-import com.example.mapchat.model.UserMessages
-import com.example.mapchat.model.Users
 import com.example.mapchat.view_model.ChatViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -47,8 +44,8 @@ class ChatFragment : Fragment() {
     private var friendId: String = ""
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var messageAdapter: MessageAdapter
-    private lateinit var friendUser: Users
-    private lateinit var currentUser: Users
+//    private lateinit var friendUser: Users
+//    private lateinit var currentUser: Users
 
     private var recyclerView: RecyclerView? = null
 
@@ -82,9 +79,9 @@ class ChatFragment : Fragment() {
         friendId = arguments?.getString("FriendId")!!
 
         linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        //linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         linearLayoutManager.stackFromEnd = true
-        linearLayoutManager.reverseLayout = true
+        //linearLayoutManager.reverseLayout = true
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration(10, 10, 10))
 
@@ -92,7 +89,7 @@ class ChatFragment : Fragment() {
             .observe(viewLifecycleOwner, Observer { user ->
 
                 if (user != null) {
-                    friendUser = user
+                    // friendUser = user
                     fragmentChatBinding.user = user
                     Glide.with(this).load(user.imageUrl)
                         .apply(RequestOptions.circleCropTransform())
@@ -105,11 +102,6 @@ class ChatFragment : Fragment() {
                 }
             })
 
-        charViewModel.getCoroutineSingleUser(mAuth.uid!!).observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                currentUser = it
-            }
-        })
 
 
         charViewModel.getAllMessages(asciiCode)
@@ -126,12 +118,12 @@ class ChatFragment : Fragment() {
                         messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
 
                         recyclerView!!.adapter = messageAdapter
-                        recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount - 1)
                         messageAdapter.notifyDataSetChanged()
 
                     }
                 })
 
+        recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount - 1)
 
         fragmentChatBinding.sendMessage.setOnClickListener {
 
@@ -186,30 +178,8 @@ class ChatFragment : Fragment() {
                     mAuth.currentUser?.photoUrl!!.toString()
                 )
 
-            val friendData =
-                UserMessages(friendUser, formatter.format(Calendar.getInstance().time), mAuth.uid)
-            val myData =
-                UserMessages(
-                    currentUser,
-                    formatter.format(Calendar.getInstance().time),
-                    friendUser.uuid
-                )
-
             charViewModel.updateMessages(asciiCode, messages)
-                .observe(viewLifecycleOwner, Observer { value ->
-
-                    if (value == true) {
-                        charViewModel.updateFriendCheckList(
-                            mAuth.uid!!,
-                            friendUser.uuid,
-                            myData,
-                            friendData
-                        ).observe(viewLifecycleOwner, Observer { })
-
-                    }
-
-
-                })
+                .observe(viewLifecycleOwner, Observer {})
 
         }
 

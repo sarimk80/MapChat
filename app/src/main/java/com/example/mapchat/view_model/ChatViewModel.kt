@@ -100,28 +100,28 @@ class ChatViewModel(private val firebaseRepository: FirebaseRepository) : ViewMo
     }
 
 
-    fun updateFriendCheckList(
-        myId: String,
-        friendId: String,
-        myData: UserMessages,
-        friendData: UserMessages
-    ): MutableLiveData<Boolean> {
-
-        isLoading.value = true
-
-        viewModelScope.launch {
-            try {
-                isSendUserUpdated.value =
-                    firebaseRepository.setFriendsCheck(myId, friendId, myData, friendData)
-                isLoading.value = false
-            } catch (e: FirebaseFirestoreException) {
-                isLoading.value = false
-                isError.value = e.message
-            }
-        }
-
-        return isSendUserUpdated
-    }
+//    fun updateFriendCheckList(
+//        myId: String,
+//        friendId: String,
+//        myData: UserMessages,
+//        friendData: UserMessages
+//    ): MutableLiveData<Boolean> {
+//
+//        isLoading.value = true
+//
+//        viewModelScope.launch {
+//            try {
+//                isSendUserUpdated.value =
+//                    firebaseRepository.setFriendsCheck(myId, friendId, myData, friendData)
+//                isLoading.value = false
+//            } catch (e: FirebaseFirestoreException) {
+//                isLoading.value = false
+//                isError.value = e.message
+//            }
+//        }
+//
+//        return isSendUserUpdated
+//    }
 
 
     fun updateSendUserData(uniqueId: String, userMessages: UserMessages): MutableLiveData<Boolean> {

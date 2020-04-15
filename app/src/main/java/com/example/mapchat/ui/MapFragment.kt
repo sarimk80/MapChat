@@ -32,6 +32,7 @@ import com.example.mapchat.databinding.FragmentMapBinding
 import com.example.mapchat.view_model.MapViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -116,6 +117,13 @@ class MapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                mapViewModel.updateToken(task.result?.token!!, mAuth.uid!!)
+                    .observe(viewLifecycleOwner,
+                        Observer { })
+            }
+        }
 
         mapViewModel.messageRead(mAuth.uid!!).observe(viewLifecycleOwner, Observer { isRead ->
             when (isRead) {
