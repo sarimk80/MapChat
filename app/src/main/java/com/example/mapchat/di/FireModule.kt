@@ -45,7 +45,7 @@ val FireModule = module {
     single {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(
             androidContext().getString(R.string.default_web_client_id)
-        ).build()
+        ).requestEmail().requestProfile().build()
     }
 
     single { FirebaseAuth.getInstance() }

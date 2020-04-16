@@ -81,7 +81,7 @@ class ChatFragment : Fragment() {
         linearLayoutManager = LinearLayoutManager(context)
         //linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         linearLayoutManager.stackFromEnd = true
-        //linearLayoutManager.reverseLayout = true
+        linearLayoutManager.reverseLayout = true
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration(10, 10, 10))
 
@@ -116,14 +116,14 @@ class ChatFragment : Fragment() {
                         ).show()
                     } else {
                         messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
-
                         recyclerView!!.adapter = messageAdapter
+                        recyclerView!!.smoothScrollToPosition(recyclerView!!.adapter?.itemCount!! - 1)
                         messageAdapter.notifyDataSetChanged()
 
                     }
                 })
 
-        recyclerView!!.smoothScrollToPosition(messageAdapter.itemCount - 1)
+
 
         fragmentChatBinding.sendMessage.setOnClickListener {
 
@@ -174,7 +174,7 @@ class ChatFragment : Fragment() {
                     mAuth.uid,
                     friendId,
                     fragmentChatBinding.edtMessage.text.toString(),
-                    formatter.format(Calendar.getInstance().time),
+                    System.currentTimeMillis().toString(),
                     mAuth.currentUser?.photoUrl!!.toString()
                 )
 

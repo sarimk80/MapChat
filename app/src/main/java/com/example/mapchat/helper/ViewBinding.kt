@@ -10,18 +10,19 @@ import com.example.mapchat.R
 import java.text.SimpleDateFormat
 
 
-//@SuppressLint("SimpleDateFormat")
-//@BindingAdapter("app:text")
-//fun formateDate(view: TextView, date: String?) {
-//
-//    if (date != null) {
-//        val formatter = SimpleDateFormat("MM/dd/yy HH:mm aa")
-//        view.text = formatter.parse(date)!!.toString()
-//    } else {
-//        view.text = "Jan-05-5020"
-//    }
-//
-//}
+@SuppressLint("SimpleDateFormat")
+@BindingAdapter("app:text")
+fun formateDate(view: TextView, date: String?) {
+
+    if (date != null) {
+        val timeStamp = date.toLong()
+        val formatter = SimpleDateFormat("MM/dd/yy hh:mm a")
+        view.text = formatter.format(timeStamp).toString()
+    } else {
+        view.text = "Jan-05-5020"
+    }
+
+}
 
 @BindingAdapter("app:imageUrl")
 fun loadImage(view: ImageView, imageUrl: String?) {

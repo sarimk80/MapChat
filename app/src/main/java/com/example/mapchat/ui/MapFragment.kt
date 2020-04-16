@@ -125,6 +125,13 @@ class MapFragment : Fragment() {
             }
         }
 
+        activity?.intent?.extras?.let {
+            for (keys in it.keySet()) {
+                val value = activity?.intent?.extras?.get(keys)
+                Log.d("MapFragment", "Key $keys value: $value")
+            }
+        }
+
         mapViewModel.messageRead(mAuth.uid!!).observe(viewLifecycleOwner, Observer { isRead ->
             when (isRead) {
                 null -> {
@@ -326,4 +333,8 @@ class MapFragment : Fragment() {
 
 }
 
-
+//
+//lateinit property location has not been initialized
+//at com.example.mapchat.ui.MapFragment.animateMap(MapFragment.kt:317)
+//at com.example.mapchat.ui.MapFragment.access$animateMap(MapFragment.kt:54)
+//at com.example.mapchat.ui.MapFragment$onViewCreated$6$1$1.onStyleLoaded(MapFragment.kt:261)
