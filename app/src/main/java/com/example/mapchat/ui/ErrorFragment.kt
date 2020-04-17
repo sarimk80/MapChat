@@ -1,4 +1,4 @@
-package com.example.mapchat
+package com.example.mapchat.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
+import com.example.mapchat.R
 import com.example.mapchat.databinding.FragmentErrorBinding
 import com.example.mapchat.event.ErrorEvent
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -25,7 +26,8 @@ class ErrorFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         fragmentErrorBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_error, container, false)
+            DataBindingUtil.inflate(inflater,
+                R.layout.fragment_error, container, false)
 
         return fragmentErrorBinding.root
     }

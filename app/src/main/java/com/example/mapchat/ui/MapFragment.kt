@@ -127,6 +127,7 @@ class MapFragment : Fragment() {
 
         activity?.intent?.extras?.let {
             for (keys in it.keySet()) {
+                Log.d("MapFragment", "in intent extras")
                 val value = activity?.intent?.extras?.get(keys)
                 Log.d("MapFragment", "Key $keys value: $value")
             }
@@ -171,6 +172,11 @@ class MapFragment : Fragment() {
                 fragmentMapBinding.root.findNavController()
                     .navigate(R.id.action_mapFragment_to_userFragment)
             }
+
+            override fun settingFab() {
+                findNavController().navigate(R.id.action_mapFragment_to_settingFragment)
+            }
+
 
         }
 

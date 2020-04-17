@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_mapFragment_to_errorFragment"
             app:destination="@id/errorFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/userFragment"
@@ -52,11 +55,20 @@
     </fragment>
     <fragment
         android:id="@+id/errorFragment"
-        android:name="com.example.mapchat.ErrorFragment"
+        android:name="com.example.mapchat.ui.ErrorFragment"
         android:label="fragment_error"
         tools:layout="@layout/fragment_error" >
         <action
             android:id="@+id/action_errorFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.mapchat.ui.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" >
+        <action
+            android:id="@+id/action_settingFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
     </fragment>
 </navigation>
