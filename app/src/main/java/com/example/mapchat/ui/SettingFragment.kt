@@ -3,6 +3,7 @@ package com.example.mapchat.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.telephony.SmsManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,11 +27,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SettingFragment : Fragment() {
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     private lateinit var settingBinding: FragmentSettingBinding
     private val settingViewModel: SettingViewModel by viewModel()
     private val mAuth: FirebaseAuth by inject()
@@ -38,6 +34,7 @@ class SettingFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var contactsAdapter: ContactsAdapter
     private var recyclerView: RecyclerView? = null
+    private val smsManager: SmsManager = SmsManager.getDefault()
 
     @SuppressLint("CheckResult")
     override fun onCreateView(
@@ -62,38 +59,16 @@ class SettingFragment : Fragment() {
         recyclerView!!.layoutManager = linearLayoutManager
 
         val rxPermissions = RxPermissions(this)
-        rxPermissions.request(android.Manifest.permission.READ_CONTACTS).subscribe {
+        rxPermissions.request(
+            android.Manifest.permission.READ_CONTACTS,
+            android.Manifest.permission.SEND_SMS
+        ).subscribe {
             if (it) {
-                val cursor = activity?.contentResolver!!.query(
-                    ContactsContract.Data.CONTENT_URI,
-                    arrayOf(
-                        ContactsContract.Data._ID,
-                        ContactsContract.Data.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.TYPE
-                    ),
-                    ContactsContract.Data.MIMETYPE + "='" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
-                            + "' AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + "= ?"
-                    , arrayOf("com.whatsapp"), null
-                )
-                while (cursor!!.moveToNext()) {
 
-                    contractList.add(
-                        Contacts(
-                            cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)),
-                            cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
-                            "INVITE"
-                        )
-                    )
-
-                }
-                contactsAdapter = ContactsAdapter(context!!, contractList)
-                Log.d("SettingFragment", contractList[2].name)
-                cursor.close()
 
             } else {
                 contractList.add(Contacts("Need permission to add your friends and family", "", ""))
-                contactsAdapter = ContactsAdapter(context!!, contractList)
+                contactsAdapter = ContactsAdapter(context!!, contractList, smsManager)
             }
         }
 
@@ -111,6 +86,33 @@ class SettingFragment : Fragment() {
                     settingBinding.user = user
                 }
             })
+        val cursor = activity?.contentResolver!!.query(
+            ContactsContract.Data.CONTENT_URI,
+            arrayOf(
+                ContactsContract.Data._ID,
+                ContactsContract.Data.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.TYPE
+            ),
+            ContactsContract.Data.MIMETYPE + "='" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
+                    + "' AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + "= ?"
+            , arrayOf("com.whatsapp"), null
+        )
+        while (cursor!!.moveToNext()) {
+
+            contractList.add(
+                Contacts(
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)),
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
+                    "INVITE"
+                )
+            )
+
+        }
+        contactsAdapter = ContactsAdapter(context!!, contractList, smsManager)
+
+        cursor.close()
+
         recyclerView!!.adapter = contactsAdapter
         contactsAdapter.notifyDataSetChanged()
 

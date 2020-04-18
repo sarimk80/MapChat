@@ -8,6 +8,10 @@
             name="contacts"
             type="com.example.mapchat.model.Contacts" />
 
+        <variable
+            name="event"
+            type="com.example.mapchat.event.ContactsEvent" />
+
     </data>
 
 
@@ -45,10 +49,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center|end"
             android:layout_margin="10dp"
-            android:fontFamily="@font/lato_bold"
+            android:fontFamily="@font/lato"
+            android:onClick="@{(v)->event.sendSms()}"
             android:text="@{contacts.invite}"
             android:textColor="@color/colorAccent"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
 
     </FrameLayout>

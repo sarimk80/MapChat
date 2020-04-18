@@ -1,15 +1,23 @@
 package com.example.mapchat.adapters
 
 import android.content.Context
+import android.telephony.SmsManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mapchat.R
 import com.example.mapchat.databinding.ContactDisplay
+import com.example.mapchat.event.ContactsEvent
 import com.example.mapchat.model.Contacts
+import com.google.android.material.snackbar.Snackbar
 
-class ContactsAdapter(private val context: Context, private val contactsList: List<Contacts>) :
+class ContactsAdapter(
+    private val context: Context,
+    private val contactsList: List<Contacts>,
+    private val smsManager: SmsManager
+) :
     RecyclerView.Adapter<ContactsAdapter.bindMessages>() {
     class bindMessages(private val contactDisplay: ContactDisplay) :
         RecyclerView.ViewHolder(contactDisplay.root) {
@@ -29,6 +37,21 @@ class ContactsAdapter(private val context: Context, private val contactsList: Li
         val layoutInflater = LayoutInflater.from(parent.context)
         val contactDisplay: ContactDisplay =
             DataBindingUtil.inflate(layoutInflater, R.layout.contacts_display, parent, false)
+
+        contactDisplay.event = object : ContactsEvent {
+            override fun sendSms() {
+                smsManager.sendTextMessage(
+                    contactDisplay.contacts!!.number,
+                    null,
+                    "Delete",
+                    null,
+                    null
+                )
+                Snackbar.make(contactDisplay.root, "Invite send Successfully", Snackbar.LENGTH_LONG)
+                    .show()
+            }
+
+        }
 
         return bindMessages(contactDisplay)
     }
