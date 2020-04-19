@@ -91,26 +91,6 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
 
     }
 
-    //TODO: DELETE AFTER REFACTOR
-//    suspend fun getAllMessagesFromFriend(uniqueId: String): List<Messages>? {
-//
-//        val messagesList = ArrayList<Messages>()
-//
-//        return try {
-//            val snapshot = db.collection("Messages").document(uniqueId).collection("PrivateMessage")
-//                .orderBy("date", Query.Direction.DESCENDING).get().await()
-//            messagesList.clear()
-//            for (documents in snapshot.documents) {
-//                messagesList.add(documents.toObject(Messages::class.java)!!)
-//            }
-//            messagesList
-//        } catch (e: FirebaseException) {
-//            Log.d("Repository", e.message!!)
-//            null
-//        }
-//
-//    }
-
     fun getAllMessages(uniqueId: String): Flow<List<Messages>> = callbackFlow {
 
         val messageList = ArrayList<Messages>()
@@ -215,6 +195,17 @@ class FirebaseRepository(private val db: FirebaseFirestore) {
             false
         }
 
+    }
+
+    suspend fun playLink(): String {
+        return try {
+            val snapshot = db.collection("playStoreLink").document("playStore").get().await()
+
+            snapshot["link"].toString()
+
+        } catch (e: FirebaseFirestoreException) {
+            ""
+        }
     }
 
 

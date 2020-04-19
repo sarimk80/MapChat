@@ -62,7 +62,6 @@ class MapFragment : Fragment() {
     //private val customMarker: String = "CustomMarker"
 
 
-    @SuppressLint("CheckResult")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,39 +72,6 @@ class MapFragment : Fragment() {
         fragmentMapBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, null, false)
 
 
-        val rxPermissions = RxPermissions(this)
-        locationManager =
-            (activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager?)!!
-
-        rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION).subscribe {
-            if (it) {
-
-
-                if (ContextCompat.checkSelfPermission(
-                        context!!,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    location =
-                        locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)!!
-
-                    mapViewModel.getUploadedResult(mAuth, location.latitude, location.longitude)
-                        .observe(viewLifecycleOwner, Observer { isUploaded ->
-                            if (isUploaded) {
-                                Log.d("FragmentMap", isUploaded.toString())
-                            } else {
-                                Log.d("FragmentMap", isUploaded.toString())
-                            }
-                        }
-                        )
-                }
-
-            } else {
-                location.latitude = 30.3753
-                location.longitude = 69.3451
-                findNavController().navigate(R.id.action_mapFragment_to_errorFragment)
-            }
-        }
 
 
         fragmentMapBinding.mapBox.onCreate(savedInstanceState)
@@ -114,6 +80,7 @@ class MapFragment : Fragment() {
         return fragmentMapBinding.root
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -127,9 +94,14 @@ class MapFragment : Fragment() {
 
         activity?.intent?.extras?.let {
             for (keys in it.keySet()) {
-                Log.d("MapFragment", "in intent extras")
+
                 val value = activity?.intent?.extras?.get(keys)
                 Log.d("MapFragment", "Key $keys value: $value")
+                fragmentMapBinding.root.findNavController().navigate(
+                    R.id.action_mapFragment_to_chatFragment,
+                    bundleOf("FriendId" to value.toString())
+                )
+
             }
         }
 
@@ -169,12 +141,16 @@ class MapFragment : Fragment() {
         //Toolbar UserImage Click Event
         fragmentMapBinding.event = object : FragmentMapEvent {
             override fun userDetail() {
-                fragmentMapBinding.root.findNavController()
-                    .navigate(R.id.action_mapFragment_to_userFragment)
+
             }
 
             override fun settingFab() {
                 findNavController().navigate(R.id.action_mapFragment_to_settingFragment)
+            }
+
+            override fun msgFab() {
+                fragmentMapBinding.root.findNavController()
+                    .navigate(R.id.action_mapFragment_to_userFragment)
             }
 
 
@@ -192,96 +168,127 @@ class MapFragment : Fragment() {
 
         })
 
+        val rxPermissions = RxPermissions(this)
+        locationManager =
+            (activity!!.getSystemService(Context.LOCATION_SERVICE) as LocationManager?)!!
 
-        //UserList Observer
-        mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
-
-
-            fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
-
-
-                mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style))) { style ->
+        rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION).subscribe {
+            if (it) {
 
 
-                    user.forEach { users ->
+                if (ContextCompat.checkSelfPermission(
+                        context!!,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    location =
+                        locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)!!
 
-                        Log.d(
-                            "mapFragment",
-                            "onViewCreated: ${users.latitude} - ${users.longitude}"
-                        )
-                        Glide.with(this).asBitmap().load(users.imageUrl)
-                            .apply(RequestOptions.circleCropTransform())
-                            .error(R.drawable.ic_person_black_24dp)
-                            .placeholder(R.drawable.ic_person_black_24dp)
-                            .into(object : CustomTarget<Bitmap>() {
-                                override fun onLoadCleared(placeholder: Drawable?) {
-                                    style.addImage(users.uuid, placeholder!!)
-                                }
-
-                                override fun onResourceReady(
-                                    resource: Bitmap,
-                                    transition: Transition<in Bitmap>?
-                                ) {
-                                    style.addImage(users.uuid, resource)
-                                    //Log.d("mapFragment", customMarker)
-                                }
-
-                            })
-
-
-                        val symbolManager =
-                            SymbolManager(fragmentMapBinding.mapBox, mapboxMap, style)
-                        symbolManager.iconAllowOverlap = true
-                        symbolManager.iconTranslate = arrayOf(-1f, -1f)
-                        symbolManager.textAllowOverlap = false
-
-                        val symbolOptions: SymbolOptions = SymbolOptions()
-                            .withLatLng(
-                                LatLng(
-                                    users.latitude!!.toDouble(),
-                                    users.longitude!!.toDouble()
-                                )
-                            )
-                            .withIconImage(users.uuid)
-                            .withIconSize(0.6f)
-                            .withTextField(users.uuid)
-                            .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
-                            .withTextSize(0f)
-                            .withTextOffset(arrayOf(0f, 0f))
-                            .withTextColor("#2f3542")
-                            .withTextJustify(Property.TEXT_JUSTIFY_CENTER)
-
-                        symbol = symbolManager.create(symbolOptions)
-
-                        symbolManager.addClickListener { Symbols ->
-
-                            if (findNavController().currentDestination?.id == R.id.mapFragment) {
-                                fragmentMapBinding.root.findNavController().navigate(
-                                    R.id.action_mapFragment_to_chatFragment,
-                                    bundleOf("FriendId" to Symbols.textField)
-                                )
+                    mapViewModel.getUploadedResult(mAuth, location.latitude, location.longitude)
+                        .observe(viewLifecycleOwner, Observer { isUploaded ->
+                            if (isUploaded) {
+                                Log.d("FragmentMap", isUploaded.toString())
                             } else {
-                                Log.d("MapFragment", "not mapfragment")
+                                Log.d("FragmentMap", isUploaded.toString())
                             }
+                        }
+                        )
+                    //UserList Observer
+                    mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
 
 
+                        fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
+
+
+                            mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style))) { style ->
+
+
+                                user.forEach { users ->
+
+                                    Log.d(
+                                        "mapFragment",
+                                        "onViewCreated: ${users.latitude} - ${users.longitude}"
+                                    )
+                                    Glide.with(this).asBitmap().load(users.imageUrl)
+                                        .apply(RequestOptions.circleCropTransform())
+                                        .error(R.drawable.ic_person_black_24dp)
+                                        .placeholder(R.drawable.ic_person_black_24dp)
+                                        .into(object : CustomTarget<Bitmap>() {
+                                            override fun onLoadCleared(placeholder: Drawable?) {
+                                                style.addImage(users.uuid, placeholder!!)
+                                            }
+
+                                            override fun onResourceReady(
+                                                resource: Bitmap,
+                                                transition: Transition<in Bitmap>?
+                                            ) {
+                                                style.addImage(users.uuid, resource)
+                                                //Log.d("mapFragment", customMarker)
+                                            }
+
+                                        })
+
+
+                                    val symbolManager =
+                                        SymbolManager(fragmentMapBinding.mapBox, mapboxMap, style)
+                                    symbolManager.iconAllowOverlap = true
+                                    symbolManager.iconTranslate = arrayOf(-1f, -1f)
+                                    symbolManager.textAllowOverlap = false
+
+                                    val symbolOptions: SymbolOptions = SymbolOptions()
+                                        .withLatLng(
+                                            LatLng(
+                                                users.latitude!!.toDouble(),
+                                                users.longitude!!.toDouble()
+                                            )
+                                        )
+                                        .withIconImage(users.uuid)
+                                        .withIconSize(0.6f)
+                                        .withTextField(users.uuid)
+                                        .withTextAnchor(Property.TEXT_ANCHOR_BOTTOM)
+                                        .withTextSize(0f)
+                                        .withTextOffset(arrayOf(0f, 0f))
+                                        .withTextColor("#2f3542")
+                                        .withTextJustify(Property.TEXT_JUSTIFY_CENTER)
+
+                                    symbol = symbolManager.create(symbolOptions)
+
+                                    symbolManager.addClickListener { Symbols ->
+
+                                        if (findNavController().currentDestination?.id == R.id.mapFragment) {
+                                            fragmentMapBinding.root.findNavController().navigate(
+                                                R.id.action_mapFragment_to_chatFragment,
+                                                bundleOf("FriendId" to Symbols.textField)
+                                            )
+                                        } else {
+                                            Log.d("MapFragment", "not mapfragment")
+                                        }
+
+
+                                    }
+
+
+                                }
+
+
+                                animateMap(mapboxMap)
+
+
+                                fragmentMapBinding.fab.setOnClickListener {
+                                    animateMap(mapboxMap)
+                                }
+                            }
                         }
 
 
-                    }
-
-
-                    animateMap(mapboxMap)
-
-
-                    fragmentMapBinding.fab.setOnClickListener {
-                        animateMap(mapboxMap)
-                    }
+                    })
                 }
+
+            } else {
+
+                findNavController().navigate(R.id.action_mapFragment_to_errorFragment)
             }
-
-
-        })
+        }
 
 
     }

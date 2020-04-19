@@ -52,31 +52,16 @@
                 app:titleTextAppearance="@style/ToolbarTitle">
 
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end">
+                <ImageView
+                    android:id="@+id/img_user"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="5dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/app_name"
+                    android:onClick="@{(v)->event.userDetail()}" />
 
-                    <ImageView
-                        android:id="@+id/img_user"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_margin="5dp"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@string/app_name"
-                        android:onClick="@{(v)->event.userDetail()}" />
-
-
-                    <ImageView
-                        android:id="@+id/badge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:background="@drawable/badge"
-                        android:contentDescription="@string/subHeading"
-                        android:visibility="invisible" />
-
-                </FrameLayout>
 
             </androidx.appcompat.widget.Toolbar>
 
@@ -103,6 +88,32 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="16dp">
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
+                android:onClick="@{(v)->event.msgFab()}"
+                android:src="@drawable/ic_message_square_outline" />
+
+            <ImageView
+                android:id="@+id/badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@drawable/badge"
+                android:contentDescription="@string/subHeading"
+                android:elevation="7dp"
+                android:visibility="invisible" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -128,8 +139,8 @@
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/ic_pin_outline" />
 

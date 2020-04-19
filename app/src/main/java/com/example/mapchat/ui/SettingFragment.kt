@@ -58,27 +58,15 @@ class SettingFragment : Fragment() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView!!.layoutManager = linearLayoutManager
 
-        val rxPermissions = RxPermissions(this)
-        rxPermissions.request(
-            android.Manifest.permission.READ_CONTACTS,
-            android.Manifest.permission.SEND_SMS
-        ).subscribe {
-            if (it) {
-
-
-            } else {
-                contractList.add(Contacts("Need permission to add your friends and family", "", ""))
-                contactsAdapter = ContactsAdapter(context!!, contractList, smsManager)
-            }
-        }
-
 
         // Inflate the layout for this fragment
         return settingBinding.root
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         settingViewModel.getCoroutineSingleUser(mAuth.uid!!)
             .observe(viewLifecycleOwner, Observer { user ->
@@ -86,36 +74,70 @@ class SettingFragment : Fragment() {
                     settingBinding.user = user
                 }
             })
-        val cursor = activity?.contentResolver!!.query(
-            ContactsContract.Data.CONTENT_URI,
-            arrayOf(
-                ContactsContract.Data._ID,
-                ContactsContract.Data.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Phone.TYPE
-            ),
-            ContactsContract.Data.MIMETYPE + "='" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
-                    + "' AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + "= ?"
-            , arrayOf("com.whatsapp"), null
-        )
-        while (cursor!!.moveToNext()) {
 
-            contractList.add(
-                Contacts(
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)),
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
-                    "INVITE"
+        val rxPermissions = RxPermissions(this)
+        rxPermissions.request(
+            android.Manifest.permission.READ_CONTACTS,
+            android.Manifest.permission.SEND_SMS
+        ).subscribe {
+            if (it) {
+
+                val cursor = activity?.contentResolver!!.query(
+                    ContactsContract.Data.CONTENT_URI,
+                    arrayOf(
+                        ContactsContract.Data._ID,
+                        ContactsContract.Data.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.TYPE
+                    ),
+                    ContactsContract.Data.MIMETYPE + "='" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
+                            + "' AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + "= ?"
+                    , arrayOf("com.whatsapp"), null
                 )
-            )
+                while (cursor!!.moveToNext()) {
+
+                    contractList.add(
+                        Contacts(
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)),
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
+                            "INVITE"
+                        )
+                    )
+
+                }
+
+                settingViewModel.getLink().observe(viewLifecycleOwner, Observer { link ->
+
+                    contactsAdapter = if (link != null) {
+                        Log.d("SettingFragment", link)
+                        ContactsAdapter(context!!, contractList, smsManager, link)
+
+
+                    } else {
+                        ContactsAdapter(context!!, contractList, smsManager, "")
+                    }
+                    cursor.close()
+
+                    recyclerView!!.adapter = contactsAdapter
+                    contactsAdapter.notifyDataSetChanged()
+
+                })
+
+            } else {
+                contractList.add(Contacts("Need permission to add your friends and family", "", ""))
+                contactsAdapter = ContactsAdapter(context!!, contractList, smsManager, "")
+            }
 
         }
-        contactsAdapter = ContactsAdapter(context!!, contractList, smsManager)
 
-        cursor.close()
 
-        recyclerView!!.adapter = contactsAdapter
-        contactsAdapter.notifyDataSetChanged()
-
+        settingViewModel.isLoading().observe(viewLifecycleOwner, Observer {
+            if (it) {
+                settingBinding.progressCircular.visibility = View.VISIBLE
+            } else {
+                settingBinding.progressCircular.visibility = View.INVISIBLE
+            }
+        })
 
     }
 

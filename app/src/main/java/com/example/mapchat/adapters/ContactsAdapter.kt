@@ -2,7 +2,6 @@ package com.example.mapchat.adapters
 
 import android.content.Context
 import android.telephony.SmsManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -16,7 +15,8 @@ import com.google.android.material.snackbar.Snackbar
 class ContactsAdapter(
     private val context: Context,
     private val contactsList: List<Contacts>,
-    private val smsManager: SmsManager
+    private val smsManager: SmsManager,
+    private val link: String
 ) :
     RecyclerView.Adapter<ContactsAdapter.bindMessages>() {
     class bindMessages(private val contactDisplay: ContactDisplay) :
@@ -33,7 +33,7 @@ class ContactsAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ContactsAdapter.bindMessages {
+    ): bindMessages {
         val layoutInflater = LayoutInflater.from(parent.context)
         val contactDisplay: ContactDisplay =
             DataBindingUtil.inflate(layoutInflater, R.layout.contacts_display, parent, false)
@@ -43,7 +43,7 @@ class ContactsAdapter(
                 smsManager.sendTextMessage(
                     contactDisplay.contacts!!.number,
                     null,
-                    "Delete",
+                    link,
                     null,
                     null
                 )
@@ -60,7 +60,7 @@ class ContactsAdapter(
         return contactsList.size
     }
 
-    override fun onBindViewHolder(holder: ContactsAdapter.bindMessages, position: Int) {
+    override fun onBindViewHolder(holder: bindMessages, position: Int) {
         val myContactList = contactsList[position]
         holder.bind(myContactList)
     }

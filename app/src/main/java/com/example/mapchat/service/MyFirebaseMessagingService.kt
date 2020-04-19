@@ -20,6 +20,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
 
         Log.d("MessagingServices", message.messageId!!)
+        Log.d("MessagingServices", message.data["senderId"].toString())
     }
 
 

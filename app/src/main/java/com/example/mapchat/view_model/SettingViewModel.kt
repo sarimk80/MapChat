@@ -8,11 +8,12 @@ import com.example.mapchat.repository.FirebaseRepository
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.launch
 
-class SettingViewModel(private val firebaseRepository: FirebaseRepository):ViewModel() {
+class SettingViewModel(private val firebaseRepository: FirebaseRepository) : ViewModel() {
 
     private val isLoading = MutableLiveData<Boolean>()
     private val isError = MutableLiveData<String>()
     private val singleUser = MutableLiveData<Users>()
+    private val link = MutableLiveData<String>()
 
     fun getCoroutineSingleUser(uniqueId: String): MutableLiveData<Users> {
 
@@ -30,5 +31,20 @@ class SettingViewModel(private val firebaseRepository: FirebaseRepository):ViewM
         }
 
         return singleUser
+    }
+
+
+    fun getLink(): MutableLiveData<String> {
+
+        isLoading.value = true
+        viewModelScope.launch {
+            link.value = firebaseRepository.playLink()
+            isLoading.value = false
+        }
+        return link
+    }
+
+    fun isLoading(): MutableLiveData<Boolean> {
+        return isLoading
     }
 }
