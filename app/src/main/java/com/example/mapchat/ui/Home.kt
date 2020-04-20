@@ -13,15 +13,6 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        intent.extras?.let {
-            for (key in it.keySet()) {
-                val value = intent.extras?.get(key)
-                Log.d("HomeActivity", "Key: $key Value: $value")
-                findNavController(R.layout.activity_home).navigate(
-                    R.id.action_mapFragment_to_chatFragment,
-                    bundleOf("FriendId" to value.toString())
-                )
-            }
-        }
+
     }
 }

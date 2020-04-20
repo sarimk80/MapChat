@@ -33,6 +33,7 @@ import com.example.mapchat.view_model.MapViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -84,11 +85,9 @@ class MapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                mapViewModel.updateToken(task.result?.token!!, mAuth.uid!!)
-                    .observe(viewLifecycleOwner,
-                        Observer { })
+        FirebaseMessaging.getInstance().subscribeToTopic(mAuth.uid!!).addOnCompleteListener {
+            if (it.isComplete) {
+                //Log.d("MapFragment", "onViewCreated: ${it.isSuccessful}")
             }
         }
 
@@ -96,11 +95,11 @@ class MapFragment : Fragment() {
             for (keys in it.keySet()) {
 
                 val value = activity?.intent?.extras?.get(keys)
-                Log.d("MapFragment", "Key $keys value: $value")
-                fragmentMapBinding.root.findNavController().navigate(
-                    R.id.action_mapFragment_to_chatFragment,
-                    bundleOf("FriendId" to value.toString())
-                )
+                // Log.d("MapFragment", "Key $keys value: $value")
+//                fragmentMapBinding.root.findNavController().navigate(
+//                    R.id.action_mapFragment_to_chatFragment,
+//                    bundleOf("FriendId" to value.toString())
+//                )
 
             }
         }
@@ -187,7 +186,7 @@ class MapFragment : Fragment() {
                     mapViewModel.getUploadedResult(mAuth, location.latitude, location.longitude)
                         .observe(viewLifecycleOwner, Observer { isUploaded ->
                             if (isUploaded) {
-                                Log.d("FragmentMap", isUploaded.toString())
+                                Log.d("FragmentMap", mAuth.currentUser!!.phoneNumber!!)
                             } else {
                                 Log.d("FragmentMap", isUploaded.toString())
                             }
@@ -205,10 +204,10 @@ class MapFragment : Fragment() {
 
                                 user.forEach { users ->
 
-                                    Log.d(
-                                        "mapFragment",
-                                        "onViewCreated: ${users.latitude} - ${users.longitude}"
-                                    )
+                                    //                                    Log.d(
+//                                        "mapFragment",
+//                                        "onViewCreated: ${users.latitude} - ${users.longitude}"
+//                                    )
                                     Glide.with(this).asBitmap().load(users.imageUrl)
                                         .apply(RequestOptions.circleCropTransform())
                                         .error(R.drawable.ic_person_black_24dp)
@@ -261,7 +260,7 @@ class MapFragment : Fragment() {
                                                 bundleOf("FriendId" to Symbols.textField)
                                             )
                                         } else {
-                                            Log.d("MapFragment", "not mapfragment")
+                                            // Log.d("MapFragment", "not mapfragment")
                                         }
 
 
