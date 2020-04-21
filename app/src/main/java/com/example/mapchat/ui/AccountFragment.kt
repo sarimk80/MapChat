@@ -1,4 +1,4 @@
-package com.example.mapchat
+package com.example.mapchat.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
+import com.example.mapchat.R
 import com.example.mapchat.databinding.FragmentAccountBinding
 import com.example.mapchat.model.Users
 import com.google.firebase.auth.FirebaseAuth
@@ -24,10 +25,14 @@ class AccountFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         accountBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_account, container, false)
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_account, container, false
+            )
 
         accountBinding.toolbarAccount.setNavigationOnClickListener {
-            it.findNavController().navigate(R.id.action_accountFragment_to_mapFragment)
+            accountBinding.root.findNavController()
+                .navigate(R.id.action_accountFragment_to_mapFragment)
         }
 
         return accountBinding.root

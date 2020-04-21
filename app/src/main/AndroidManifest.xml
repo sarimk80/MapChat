@@ -34,7 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.Home">
+        <activity
+            android:name=".ui.Home"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="View" />
                 <category android:name="android.intent.category.DEFAULT" />

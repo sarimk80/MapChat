@@ -3,6 +3,7 @@ package com.example.mapchat.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -117,7 +118,8 @@ class ChatFragment : Fragment() {
                     } else {
                         messageAdapter = MessageAdapter(context!!, data, mAuth.uid!!)
                         recyclerView!!.adapter = messageAdapter
-                        recyclerView!!.smoothScrollToPosition(recyclerView!!.adapter?.itemCount!! - 1)
+
+                        recyclerView!!.scrollToPosition(0)
                         messageAdapter.notifyDataSetChanged()
 
                     }
@@ -167,7 +169,6 @@ class ChatFragment : Fragment() {
 
         if (fragmentChatBinding.edtMessage.text.isNotEmpty()) {
 
-            val formatter = SimpleDateFormat("MM/dd/yy hh:mm a")
 
             val messages =
                 Messages(
