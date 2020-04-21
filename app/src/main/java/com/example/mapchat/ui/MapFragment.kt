@@ -140,7 +140,7 @@ class MapFragment : Fragment() {
         //Toolbar UserImage Click Event
         fragmentMapBinding.event = object : FragmentMapEvent {
             override fun userDetail() {
-
+                findNavController().navigate(R.id.action_mapFragment_to_accountFragment)
             }
 
             override fun settingFab() {

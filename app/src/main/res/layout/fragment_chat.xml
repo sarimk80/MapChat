@@ -65,7 +65,7 @@
 
             <EditText
                 android:id="@+id/edt_message"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
@@ -76,9 +76,10 @@
                 android:inputType="text"
                 android:padding="10dp"
                 android:textColor="@color/colorText"
-                android:textSize="15sp" />
+                android:textSize="18sp" />
 
             <ImageView
+                android:contentDescription="@string/app_name"
                 android:id="@+id/send_Message"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
