@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -29,6 +30,7 @@ import com.example.mapchat.event.FragmentMapEvent
 
 import com.example.mapchat.R
 import com.example.mapchat.databinding.FragmentMapBinding
+import com.example.mapchat.model.Users
 import com.example.mapchat.view_model.MapViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -45,6 +47,13 @@ import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import com.mapbox.mapboxsdk.style.layers.Property
 import com.tbruyelle.rxpermissions2.RxPermissions
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -192,23 +201,17 @@ class MapFragment : Fragment() {
                             }
                         }
                         )
-                    //UserList Observer
-                    mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
+
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        listOfUsers().collect { users ->
+                            fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
 
 
-                        fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
+                                mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style)))
+                                { style ->
 
-
-                            mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style))) { style ->
-
-
-                                user.forEach { users ->
-
-                                    //                                    Log.d(
-//                                        "mapFragment",
-//                                        "onViewCreated: ${users.latitude} - ${users.longitude}"
-//                                    )
-                                    Glide.with(this).asBitmap().load(users.imageUrl)
+                                    Glide.with(fragmentMapBinding.root).asBitmap()
+                                        .load(users.imageUrl)
                                         .apply(RequestOptions.circleCropTransform())
                                         .error(R.drawable.ic_person_black_24dp)
                                         .placeholder(R.drawable.ic_person_black_24dp)
@@ -259,28 +262,31 @@ class MapFragment : Fragment() {
                                                 R.id.action_mapFragment_to_chatFragment,
                                                 bundleOf("FriendId" to Symbols.textField)
                                             )
-                                        } else {
-                                            // Log.d("MapFragment", "not mapfragment")
                                         }
-
 
                                     }
 
 
-                                }
 
 
-                                animateMap(mapboxMap)
 
-
-                                fragmentMapBinding.fab.setOnClickListener {
                                     animateMap(mapboxMap)
+
+
+                                    fragmentMapBinding.fab.setOnClickListener {
+                                        animateMap(mapboxMap)
+                                    }
                                 }
                             }
+
                         }
-
-
-                    })
+                    }
+//                    //UserList Observer
+//                    mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
+//                        Log.d("MapFragment", "${user.size}")
+//
+//
+//                    })
                 }
 
             } else {
@@ -342,11 +348,12 @@ class MapFragment : Fragment() {
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000)
     }
 
+    private fun listOfUsers(): Flow<Users> = callbackFlow {
+
+        mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
+            user.forEach { singleUser -> offer(singleUser) }
+        })
+        awaitClose { close() }
+    }
 
 }
-
-//
-//lateinit property location has not been initialized
-//at com.example.mapchat.ui.MapFragment.animateMap(MapFragment.kt:317)
-//at com.example.mapchat.ui.MapFragment.access$animateMap(MapFragment.kt:54)
-//at com.example.mapchat.ui.MapFragment$onViewCreated$6$1$1.onStyleLoaded(MapFragment.kt:261)
