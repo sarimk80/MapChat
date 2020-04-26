@@ -41,7 +41,21 @@
 <img src="https://github.com/sarimk80/MapChat/raw/master/images/signIn.png"
 width="300">
 
-<img src="https://github.com/sarimk80/MapChat/raw/master/images/home.png" width="300">
+<img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/042/957/datas/gallery.jpg" width="300">
+<br/>
+
+<img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/042/959/datas/gallery.jpg" width="300">
+<br/>
 
 
+<img src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/042/962/datas/gallery.jpg" width="300">
+<br/>
+
+
+### TODOS
+
+- [ ] Send image  (right now user can only send text messages).
+- [ ] Change account page UI design.
+- [ ] Feature that will display users to only their friends.
+- [ ] Settings page where user can adjust map icon visibility.
 

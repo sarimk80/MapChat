@@ -3,18 +3,14 @@ package com.example.mapchat.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+
 import android.view.*
 
 import androidx.fragment.app.Fragment
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mapchat.R
@@ -98,6 +94,9 @@ class UserFragment : Fragment() {
                 friendMessageAdapter.notifyDataSetChanged()
             } else {
                 Snackbar.make(fragmentUserBinding.root, "No messages", Snackbar.LENGTH_LONG).show()
+            }
+            if(friends.isEmpty()){
+                Snackbar.make(fragmentUserBinding.root, "No Friends try making some", Snackbar.LENGTH_LONG).show()
             }
 
 

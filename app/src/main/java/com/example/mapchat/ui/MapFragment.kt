@@ -193,23 +193,25 @@ class MapFragment : Fragment() {
                         locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)!!
 
                     mapViewModel.getUploadedResult(mAuth, location.latitude, location.longitude)
-                        .observe(viewLifecycleOwner, Observer { isUploaded ->
-                            if (isUploaded) {
-                                Log.d("FragmentMap", mAuth.currentUser!!.phoneNumber!!)
-                            } else {
-                                Log.d("FragmentMap", isUploaded.toString())
-                            }
+                        .observe(viewLifecycleOwner, Observer {
+//                            if (isUploaded) {
+//                                Log.d("FragmentMap", mAuth.currentUser!!.phoneNumber!!)
+//                            } else {
+//                                Log.d("FragmentMap", isUploaded.toString())
+//                            }
                         }
                         )
 
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        listOfUsers().collect { users ->
-                            fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
+
+                    fragmentMapBinding.mapBox.getMapAsync { mapboxMap ->
 
 
-                                mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style)))
-                                { style ->
+                        mapboxMap.setStyle(Style.Builder().fromUri(getString(R.string.mapboc_access_style)))
+                        { style ->
 
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                listOfUsers().collect { users ->
+                                    Log.d("MapFragment", users.name!!)
                                     Glide.with(fragmentMapBinding.root).asBitmap()
                                         .load(users.imageUrl)
                                         .apply(RequestOptions.circleCropTransform())
@@ -266,21 +268,23 @@ class MapFragment : Fragment() {
 
                                     }
 
-
-
-
-
-                                    animateMap(mapboxMap)
-
-
-                                    fragmentMapBinding.fab.setOnClickListener {
-                                        animateMap(mapboxMap)
-                                    }
                                 }
                             }
 
+
+
+
+
+                            animateMap(mapboxMap)
+
+
+                            fragmentMapBinding.fab.setOnClickListener {
+                                animateMap(mapboxMap)
+                            }
                         }
                     }
+
+
 //                    //UserList Observer
 //                    mapViewModel.getUserList().observe(viewLifecycleOwner, Observer { user ->
 //                        Log.d("MapFragment", "${user.size}")

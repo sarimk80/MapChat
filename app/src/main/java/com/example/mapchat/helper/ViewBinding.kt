@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 
 @SuppressLint("SimpleDateFormat")
 @BindingAdapter("app:text")
-fun formateDate(view: TextView, date: String?) {
+fun formatDate(view: TextView, date: String?) {
 
     if (date != null) {
         val timeStamp = date.toLong()
