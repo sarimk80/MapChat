@@ -22,26 +22,17 @@ val mapVewModelModule = module {
     viewModel {
         SettingViewModel(get())
     }
-}
-
-val chatViewModelModule = module {
     viewModel {
         ChatViewModel(get())
     }
-
-}
-val userViewModelModule = module {
     viewModel {
         UserViewModel(get())
     }
-
-}
-
-val RepositoryModule = module {
     single {
         FirebaseRepository(get())
     }
 }
+
 
 val FireModule = module {
     single {
