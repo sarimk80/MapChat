@@ -63,6 +63,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0">
 
+            <ImageButton
+                android:id="@+id/img_gif"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:background="@drawable/ic_smiling_face_outline"
+                android:contentDescription="@string/app_name"
+                android:padding="10dp" />
+
             <androidx.emoji.widget.EmojiEditText
                 android:id="@+id/edt_message"
                 android:layout_width="0dp"
@@ -79,7 +89,6 @@
                 android:textSize="18sp" />
 
             <androidx.emoji.widget.EmojiButton
-                android:contentDescription="@string/app_name"
                 android:id="@+id/send_Message"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -87,6 +96,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="0.1"
                 android:background="@drawable/ic_paper_plane_outline"
+                android:contentDescription="@string/app_name"
                 android:elevation="0dp"
                 android:padding="10dp" />
 

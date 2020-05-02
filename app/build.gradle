@@ -51,6 +51,7 @@ dependencies {
     def design = "28.0.0"
     def cloud_message = "20.1.5"
     def emoji = "28.0.0"
+    def giphy = "1.2.6"
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'com.android.databinding:compiler:3.1.4'
@@ -114,6 +115,9 @@ dependencies {
 
     //Emoji
     implementation "com.android.support:support-emoji:$emoji"
+
+    //giphy
+    implementation "com.giphy.sdk:ui:$giphy"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

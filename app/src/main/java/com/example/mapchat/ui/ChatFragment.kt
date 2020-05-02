@@ -24,14 +24,27 @@ import com.example.mapchat.databinding.FragmentChatBinding
 import com.example.mapchat.helper.getCity
 import com.example.mapchat.model.Messages
 import com.example.mapchat.view_model.ChatViewModel
+import com.giphy.sdk.core.models.*
+import com.giphy.sdk.core.models.enums.MediaType
+import com.giphy.sdk.core.models.enums.RatingType
+import com.giphy.sdk.core.models.enums.RenditionType
+import com.giphy.sdk.ui.GPHContentType
+import com.giphy.sdk.ui.GPHSettings
+import com.giphy.sdk.ui.Giphy
+import com.giphy.sdk.ui.themes.GPHTheme
+import com.giphy.sdk.ui.themes.GridType
+import com.giphy.sdk.ui.themes.Theme
+import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import convertToAscii
 
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * A simple [Fragment] subclass.
@@ -68,6 +81,8 @@ class ChatFragment : Fragment() {
             it.findNavController().navigate(R.id.action_chatFragment_to_mapFragment)
         }
 
+        Giphy.configure(context!!, getString(R.string.giphyApi), false)
+
 
         return fragmentChatBinding.root
     }
@@ -85,6 +100,24 @@ class ChatFragment : Fragment() {
         linearLayoutManager.reverseLayout = true
         recyclerView!!.layoutManager = linearLayoutManager
         recyclerView!!.addItemDecoration(MessageDecoration(10, 10, 10))
+
+        val setting = GPHSettings(
+            GridType.waterfall,
+            GPHTheme.Automatic,
+            arrayOf(
+                GPHContentType.emoji,
+                GPHContentType.gif,
+                GPHContentType.sticker,
+                GPHContentType.text,
+                GPHContentType.recents
+            ),
+            showConfirmationScreen = false,
+            showAttribution = false,
+            rating = RatingType.pg13
+
+        )
+        val ghFragment = GiphyDialogFragment.newInstance(settings = setting)
+
 
         charViewModel.getNewSingleUser(friendId)
             .observe(viewLifecycleOwner, Observer { user ->
@@ -126,6 +159,9 @@ class ChatFragment : Fragment() {
                 })
 
 
+        fragmentChatBinding.imgGif.setOnClickListener {
+            ghFragment.show(activity!!.supportFragmentManager, "gifs_dialog")
+        }
 
         fragmentChatBinding.sendMessage.setOnClickListener {
 
@@ -160,11 +196,39 @@ class ChatFragment : Fragment() {
             Snackbar.make(fragmentChatBinding.root, error, Snackbar.LENGTH_SHORT).show()
         })
 
+        ghFragment.gifSelectionListener = object : GiphyDialogFragment.GifSelectionListener {
+            override fun didSearchTerm(term: String) {
+
+            }
+
+            override fun onDismissed() {
+
+            }
+
+            override fun onGifSelected(media: Media) {
+
+
+                val messages = Messages(
+                    mAuth.uid,
+                    friendId,
+                    "",
+                    System.currentTimeMillis().toString(),
+                    mAuth.currentUser?.photoUrl!!.toString(),
+                    media.images.original!!.gifUrl,
+                    "",
+                    "Gif"
+                )
+
+                charViewModel.updateMessages(asciiCode, messages)
+                    .observe(viewLifecycleOwner, Observer { })
+                ghFragment.dismiss()
+            }
+
+        }
 
     }
 
 
-    @SuppressLint("SimpleDateFormat")
     private fun sendMessageToDataBase() {
 
         if (fragmentChatBinding.edtMessage.text.isNotEmpty()) {
@@ -176,7 +240,10 @@ class ChatFragment : Fragment() {
                     friendId,
                     fragmentChatBinding.edtMessage.text.toString(),
                     System.currentTimeMillis().toString(),
-                    mAuth.currentUser?.photoUrl!!.toString()
+                    mAuth.currentUser?.photoUrl!!.toString(),
+                    null,
+                    "",
+                    "Text"
                 )
 
             charViewModel.updateMessages(asciiCode, messages)

@@ -35,3 +35,9 @@ fun loadImage(view: ImageView, imageUrl: String?) {
 
 
 }
+
+@BindingAdapter("app:gif")
+fun loadGif(view: ImageView, imageUrl: String?) {
+    Glide.with(view.context).asGif().load(imageUrl)
+        .placeholder(R.drawable.ic_round_emoji_emotions_24).into(view)
+}
